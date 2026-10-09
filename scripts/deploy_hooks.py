@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""deploy_hooks.py — 部署/卸载 long-novel-skill 的机械 Hook 到 Claude Code settings.json。
+"""deploy_hooks.py — 部署/卸载 general-novel-skill 的机械 Hook 到 Claude Code settings.json。
 
 把 hook_entry.py 注册进书籍工程的 `.claude/settings.json`，实现「无章纲写正文」
 与「正文毒句式欠账」的机械强制（PreToolUse / PostToolUse），以及会话开始/压缩前
@@ -152,7 +152,7 @@ def uninstall(project_dir):
 
 def main(argv):
     _ensure_utf8()
-    ap = argparse.ArgumentParser(description="部署/卸载 long-novel-skill 机械 Hook")
+    ap = argparse.ArgumentParser(description="部署/卸载 general-novel-skill 机械 Hook")
     ap.add_argument("project_dir", nargs="?", default=".", help="书籍工程目录（默认当前目录）")
     ap.add_argument("--uninstall", action="store_true", help="卸载本 skill 的 hook 条目")
     args = ap.parse_args(argv[1:])

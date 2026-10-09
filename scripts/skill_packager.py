@@ -131,22 +131,22 @@ PLATFORMS = {
     "claude_skill": {
         "name": "Claude Desktop Skill",
         "description": "Claude Desktop / Claude Code 原生Skill格式",
-        "output_name": "long-novel-skill-claude",
+        "output_name": "general-novel-skill-claude",
     },
     "cursor_skill": {
         "name": "Cursor Rules",
         "description": "Cursor IDE 的 .cursorrules 规则文件",
-        "output_name": "long-novel-skill-cursor",
+        "output_name": "general-novel-skill-cursor",
     },
     "trae_skill": {
         "name": "Trae Skill",
         "description": "Trae IDE 的Skill格式（与当前格式一致）",
-        "output_name": "long-novel-skill-trae",
+        "output_name": "general-novel-skill-trae",
     },
     "vscode_snippet": {
         "name": "VSCode Snippets",
         "description": "VSCode 代码片段（.code-snippets）",
-        "output_name": "long-novel-skill-vscode",
+        "output_name": "general-novel-skill-vscode",
     },
 }
 
@@ -245,7 +245,7 @@ def _generate_micro_readme(skill_id: str, skill_def: Dict[str, Any]) -> str:
     """为微Skill生成README。"""
     return f"""# {skill_def['name']}
 
-> 属于 long-novel-skill 系列的微Skill
+> 属于 general-novel-skill 系列的微Skill
 
 {skill_def['description']}
 
@@ -319,7 +319,7 @@ def _generate_claude_skill(plugin_dir: Path, skill_root: Path):
 
     # 生成pyproject.toml（Claude推荐）
     pyproject = f"""[project]
-name = "long-novel-skill"
+name = "general-novel-skill"
 version = "6.1.0"
 description = "企业级长篇小说创作辅助系统"
 requires-python = ">=3.8"
@@ -341,7 +341,7 @@ where = ["scripts"]
    - macOS: ~/Library/Application Support/Claude/Skills/
    - Windows: %APPDATA%\\Claude\\Skills\\
 2. 重启 Claude Desktop
-3. 在Skill列表中找到 "long-novel-skill"
+3. 在Skill列表中找到 "general-novel-skill"
 
 ## 使用
 
@@ -438,11 +438,11 @@ def _generate_trae_skill(plugin_dir: Path, skill_root: Path):
 
 1. 将本目录复制到 Trae Skills 目录
 2. 在 Trae 中刷新 Skill 列表
-3. 启用 long-novel-skill
+3. 启用 general-novel-skill
 
 ## 使用
 
-在对话中 @long-novel-skill 或直接说：
+在对话中 @general-novel-skill 或直接说：
 - "初始化一本小说"
 - "检查质量"
 - "生成大纲"
@@ -547,7 +547,7 @@ def _generate_vscode_snippets(plugin_dir: Path, skill_root: Path):
         "description": "人物设定卡片模板",
     }
 
-    common.write_json(plugin_dir / "long-novel-skill.code-snippets", snippets)
+    common.write_json(plugin_dir / "general-novel-skill.code-snippets", snippets)
 
     # 使用说明
     install = f"""# VSCode Snippets 安装
@@ -556,7 +556,7 @@ def _generate_vscode_snippets(plugin_dir: Path, skill_root: Path):
 2. 按 `Ctrl+Shift+P` (Windows) / `Cmd+Shift+P` (Mac)
 3. 输入 "Configure User Snippets"
 4. 选择 "markdown.json" 或 "新建全局代码片段文件"
-5. 将 `long-novel-skill.code-snippets` 的内容粘贴进去
+5. 将 `general-novel-skill.code-snippets` 的内容粘贴进去
 
 ## 可用片段
 

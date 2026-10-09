@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""run_tests.py — long-novel-skill 测试套件运行器（纯标准库）。
+"""run_tests.py — general-novel-skill 测试套件运行器（纯标准库）。
 
 用法：
     python scripts/tests/run_tests.py               # 运行所有测试
@@ -8,7 +8,7 @@
     python scripts/tests/run_tests.py test_common test_check_text  # 运行多个
 
 输出格式：
-    === long-novel-skill 测试套件 ===
+    === general-novel-skill 测试套件 ===
 
     test_common.py ............... 15/15 通过，跳过 0，失败 0
     test_check_text.py ........... 7/8 通过，跳过 1，失败 0
@@ -156,7 +156,7 @@ def main(argv):
     else:
         modules = list(TEST_MODULES)
 
-    print("=== long-novel-skill 测试套件 ===")
+    print("=== general-novel-skill 测试套件 ===")
     print("计数：分母为运行的方法数；跳过/失败含fixture结果，fixture级结果不计入方法分母。")
     print()
 

@@ -1,5 +1,5 @@
 ---
-name: long-novel-skill
+name: general-novel-skill
 description: Use when creating, continuing, revising, analyzing, or publishing Chinese web fiction, especially long serial novels that need outlines, continuity tracking, pacing control, style calibration, or recovery after interruption.
 license: MIT
 metadata:

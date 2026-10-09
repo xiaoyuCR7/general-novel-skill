@@ -1,10 +1,10 @@
 {
-  "name": "long-novel-skill",
+  "name": "general-novel-skill",
   "version": "8.2.0",
-  "description": "面向中文长篇网文的可恢复创作系统：以轻量意图路由、章意图契约、场景渲染内核和原子追踪事务协调开书、续写、修订、分析与发布。支持34题材、多平台适配。",
+  "description": "面向中文小说创作的可恢复创作系统（长篇 + 短篇）：以轻量意图路由、章意图契约、场景渲染内核和原子追踪事务协调开书、续写、修订、分析与发布。支持34题材、多平台适配。",
   "activation": {
     "patterns": [
-      "/long-novel-skill",
+      "/general-novel-skill",
       "/开书",
       "/写小说",
       "/网文"
@@ -73,8 +73,8 @@
   "metadata": {
     "author": "熊小雨",
     "license": "MIT",
-    "homepage": "https://github.com/xiaoyuCR7/long-novel-skill",
-    "repository": "https://github.com/xiaoyuCR7/long-novel-skill",
+    "homepage": "https://github.com/xiaoyuCR7/general-novel-skill",
+    "repository": "https://github.com/xiaoyuCR7/general-novel-skill",
     "created": "2026-07-26",
     "last_reviewed": "2026-09-10",
     "review_interval_days": 90,

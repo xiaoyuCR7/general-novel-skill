@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-long-novel-skill MCP Server
+general-novel-skill MCP Server
 将小说创作技能封装为MCP Server，支持任何MCP客户端调用
 
 使用方法:
@@ -378,7 +378,7 @@ def create_mcp_server():
     if not HAS_MCP:
         raise ImportError("MCP SDK未安装，请运行: pip install mcp")
     
-    mcp = FastMCP("long_novel_skill_mcp")
+    mcp = FastMCP("general_novel_skill_mcp")
     
     # ============ 文本检查工具 ============
     
@@ -965,7 +965,7 @@ def main():
         sys.exit(1)
     
     import argparse
-    parser = argparse.ArgumentParser(description="long-novel-skill MCP Server")
+    parser = argparse.ArgumentParser(description="general-novel-skill MCP Server")
     parser.add_argument("--http", action="store_true", help="使用HTTP模式（默认stdio）")
     parser.add_argument("--port", type=int, default=8000, help="HTTP端口（默认8000）")
     args = parser.parse_args()

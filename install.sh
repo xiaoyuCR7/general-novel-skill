@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# long-novel-skill 跨平台安装脚本
+# general-novel-skill 跨平台安装脚本
 # 支持: Claude Code, TRAE, Cursor, Codex, OpenCode, Gemini CLI, Antigravity
 
 set -euo pipefail
 
-SKILL_NAME="long-novel-skill"
+SKILL_NAME="general-novel-skill"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FORCE=false
 

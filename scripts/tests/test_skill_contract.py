@@ -84,7 +84,7 @@ class TestSkillContract(unittest.TestCase):
     def test_linked_worktree_uses_the_common_repository_name(self):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
-            common_git = base / "long-novel-skill" / ".git"
+            common_git = base / "general-novel-skill" / ".git"
             gitdir = common_git / "worktrees" / "skill-superiority"
             gitdir.mkdir(parents=True)
             root = base / "checkouts" / "skill-superiority"
@@ -92,7 +92,7 @@ class TestSkillContract(unittest.TestCase):
             self._write_skill(
                 root,
                 "---\n"
-                "name: long-novel-skill\n"
+                "name: general-novel-skill\n"
                 "description: Use when checking a linked worktree.\n"
                 "---\n"
                 "Body.\n",
@@ -112,7 +112,7 @@ class TestSkillContract(unittest.TestCase):
             self._write_skill(
                 root,
                 "---\n"
-                "name: long-novel-skill\n"
+                "name: general-novel-skill\n"
                 "description: Use when checking an ordinary skill directory.\n"
                 "---\n"
                 "Body.\n",

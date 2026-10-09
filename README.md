@@ -1,18 +1,12 @@
-# long-novel-skill
+# general-novel-skill
 
-通用网文创作 agent skill（长篇 + 短篇），**v8.2.0**。核心只装通用写作工艺（工作流 + 模板 + 禁区清单），
+通用小说创作 agent skill（长篇 + 短篇），**v8.2.0**。核心只装通用写作工艺（工作流 + 模板 + 禁区清单），
 题材规则（34 题材 + 九件事正文层规范）与平台规则（长篇番茄/起点/晋江/飞卢 + 短篇知乎盐言/番茄短篇/七猫短篇）
 做成可插拔的参考文件，按需加载。
 
 玄幻、修仙、武道、系统等题材按作品内设定创作与审核，允许复生、瞬移、无代价奖励等超现实机制；
 不把现实法律或科学作为剧情可行性的门槛。题材惯例服从作者路线，保留内部因果和能力条件的一致性。
 具体见 [虚构世界创作规则](references/craft/fictional-world.md)，6个补充场景见 [评测集](evals/README.md)。
-
-2026-09-05 的优化已记入 Unreleased：统计分数与语义审核分离，图谱保留未确认断言与来源，
-上下文未知约束不丢弃，作者偏好显式记忆；专项场景规则与案例按需读取。
-新增工具与诊断见 [证据工作流](references/workflow/evidence-review.md)，
-偏好用法见 [作者偏好](references/workflow/author-preferences.md)，
-24 个原始 Agent 场景见 [评测集](evals/README.md)。
 
 ## 能力证据边界
 
@@ -35,44 +29,9 @@
 - 文学感染力、平台适配与最终封面文字仍需作者或编辑验收；脚本分数不替代审美与发布审核。
 - 自动化校验只证明明确写入契约的行为，不替代真实创作样本的匿名评审与长期连载检验。
 
-v6.1 在 v6.0 基础上新增跨平台支持体系：MCP Server 封装（24 个 Tools 支持任何 MCP 客户端）、
-跨平台安装脚本（install.sh/install.ps1 支持 Claude Code/TRAE/Cursor/Codex/OpenCode/Gemini CLI/Antigravity）、
-skill.json 跨平台技能定义文件、TRAE Agent 部署路径适配。一次封装，全平台通用。
+## 跨平台安装
 
-v6.0 在 v5.0 基础上新增 Beat Sheet 生成器、章节合成器、门禁修复计划、编辑团队状态管理器、自动化 Hook 机制、
-RAG 检索增强六大核心脚本，并补齐共享工具模块（common.py + config.py）与核心脚本测试套件（该历史版本为744个单元测试），
-新增拆文产出结构化分目录规范工艺文件，题材卡扩展至 34 张，新增：
-Beat Sheet 生成器（分镜表自动拆分+五维扩写+合成校验）、
-章节合成器（Beat 拼接+过渡检测+质量校验+润色提示）、
-门禁修复计划（失败原因分析+修复策略映射+最短修复路径）、
-编辑团队状态管理（快照/审核记录/状态查询/人工介入检测）、
-自动化 Hook 机制（5 个 Hook：session-start/guard-outline/check-prose/detect-gaps/pre-compact）、
-RAG 检索增强（BM25 两级+增量索引+查询缓存+轻场景跳过+命中可解释+写前上下文建议）、
-共享模块（common.py 工具函数+config.py 配置常量）、
-核心脚本测试套件（744 个单元测试覆盖 20 个脚本模块）。
-
-v5.0 在 v4.1 基础上新增智能内容扩充引擎、长篇上下文管理器、统一流程执行器、质量评分系统四大量化工具体系，
-补齐身体细节替代情绪词、特殊题材处理、题材公式、全流程质量检查清单四类工艺文档，并针对两个开源 skill 的能力面补缺，新增：
-语义级节奏审查（四维度：档位判断+配额语义核查+悬念质量+隐性加速检测）、
-知识图谱（节点+边+版本+级联标记+Mermaid导出+影响分析）、
-联网调研（题材维度映射+缺口检测+关键词生成+结构化存储）、
-门禁产物规范（gate_result.json schema + 跨Agent消费接口）、
-对话精通（7种决策路由+冲突递进五级+节奏控制+微动作配合）、
-悬念分级（5级体系+多线周期+期待接力+信息释放节奏）、
-信息团概念（定义+递进+排版+三层信息差）、
-长篇情绪引擎（因果链+正向发动机+负向护栏+情绪模块八大类）、
-爆款语料基准（句长/逗号比/对话占比/爽点密度/情绪转换频率）、
-仿写工作流（拆文→提取→选风格→开书→魔改五步）、
-章节元数据侧车（per-chapter meta.json schema）、
-风格库跨书复用（import/search/apply/delete）、
-命令入口表（30个命令+新手/高级分层）、
-story_graph.py（知识图谱脚本）、
-research_agent.py（联网调研脚本）、
-style_library.py（风格库管理脚本）。
-
-## 跨平台安装（v6.1 新增）
-
-long-novel-skill 支持在多个 AI 客户端平台使用：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。
+general-novel-skill 支持在多个 AI 客户端平台使用：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。
 
 ### 一键安装
 
@@ -92,11 +51,11 @@ bash install.sh --tool all
 
 | 平台 | 安装路径 | 命令 |
 |------|---------|------|
-| Claude Code | `~/.claude/skills/` | `cp -R long-novel-skill ~/.claude/skills/` |
-| TRAE | `~/.trae/skills/` 或项目级 `.trae/skills/` | `cp -R long-novel-skill ~/.trae/skills/` |
-| Cursor | `~/.cursor/skills/` | `cp -R long-novel-skill ~/.cursor/skills/` |
-| OpenCode | `~/.opencode/skills/` | `cp -R long-novel-skill ~/.opencode/skills/` |
-| Codex | `~/.codex/skills/` | `cp -R long-novel-skill ~/.codex/skills/` |
+| Claude Code | `~/.claude/skills/` | `cp -R general-novel-skill ~/.claude/skills/` |
+| TRAE | `~/.trae/skills/` 或项目级 `.trae/skills/` | `cp -R general-novel-skill ~/.trae/skills/` |
+| Cursor | `~/.cursor/skills/` | `cp -R general-novel-skill ~/.cursor/skills/` |
+| OpenCode | `~/.opencode/skills/` | `cp -R general-novel-skill ~/.opencode/skills/` |
+| Codex | `~/.codex/skills/` | `cp -R general-novel-skill ~/.codex/skills/` |
 
 ### MCP Server 模式（推荐）
 
@@ -112,9 +71,9 @@ python server.py
 ```json
 {
   "mcpServers": {
-    "long_novel_skill": {
+    "general_novel_skill": {
       "command": "python",
-      "args": ["/path/to/long-novel-skill/mcp_server/server.py"]
+      "args": ["/path/to/general-novel-skill/mcp_server/server.py"]
     }
   }
 }
@@ -139,7 +98,7 @@ cp assets/agents/*.md {书籍工程根}/.trae/agents/
 ## 结构
 
 ```
-long-novel-skill/
+general-novel-skill/
 ├── SKILL.md                  # 核心入口：触发条件、工作流总览、Iron Law、题材/平台加载协议
 ├── references/
 │   ├── workflow/             # 工作流（当前 29 个）
@@ -150,7 +109,7 @@ long-novel-skill/
 │   │   ├── beat-pipeline.md      # Beat Sheet 多步流水线
 │   │   ├── deconstruct.md        # 拆文学习对标（轻量四维）
 │   │   ├── deconstruct-pipeline.md  # 拆文七阶段工业管道
-│   │   ├── deconstruct-output-spec.md  # 拆文产出结构化分目录规范（v6.0 新增）
+│   │   ├── deconstruct-output-spec.md  # 拆文产出结构化分目录规范
 │   │   ├── market-scan.md        # 扫榜选题（方法论）
 │   │   ├── market-scan-deep.md   # 扫榜深度选题（选题四步+读者画像+决策报告）
 │   │   ├── import-book.md        # 导入旧稿接手（概述）
@@ -161,10 +120,10 @@ long-novel-skill/
 │   │   ├── ideation.md           # 交互式脑洞引导（5轮收敛+压力测试）
 │   │   ├── editorial-spawn.md    # 编辑团队 8 步 spawn 协议
 │   │   ├── cross-review.md       # 跨 Agent 审核协议（路由表+三维度报告+批处理）
-│   │   ├── research.md           # 联网调研工作流（v4.0 新增）
-│   │   ├── imitation.md          # 仿写工作流（对标书→新书五步）（v4.0 新增）
-│   │   ├── style-library.md      # 风格库跨书复用（v4.0 新增）
-│   │   ├── commands.md           # 命令入口表（30个命令+新手/高级分层）（v4.0 新增）
+│   │   ├── research.md           # 联网调研工作流
+│   │   ├── imitation.md          # 仿写工作流（对标书→新书五步）
+│   │   ├── style-library.md      # 风格库跨书复用
+│   │   ├── commands.md           # 命令入口表（30个命令+新手/高级分层）
 │   │   ├── revision.md           # 大修流程
 │   │   └── book-scaling.md       # 百万字结构展开
 │   ├── craft/                # 通用写作工艺（当前 50 个）
@@ -173,7 +132,7 @@ long-novel-skill/
 │   │   ├── deslop-engineering.md  # 去AI味工程化（量化分级+删除优先+比例上限+白名单+收敛终止）
 │   │   ├── sensitive-word-replacement.md  # 敏感词替换（地名代称/别称置换/地名脱敏）
 │   │   ├── pacing-and-hooks.md   # 节奏三档制 + A/B/C 配额
-│   │   ├── pacing-review.md      # 语义级节奏审查（四维度）（v4.0 新增）
+│   │   ├── pacing-review.md      # 语义级节奏审查（四维度）
 │   │   ├── reverse-brake.md      # 反向刹车 + 事件冷却
 │   │   ├── reader-contract.md    # 读者契约（执行模板）
 │   │   ├── reader-contract-deep.md  # 读者契约深度理论（因果权+结算权+终局储备+透支两问）
@@ -187,31 +146,31 @@ long-novel-skill/
 │   │   ├── style-profile.md      # 文风协议（整书级视图+锚点片段+分层模仿+confidence）
 │   │   ├── editorial-team.md    # 编辑团队协作（对接 assets/agents/）
 │   │   ├── review-rubric.md      # 多视角盲评
-│   │   ├── gate-artifacts-spec.md  # 门禁产物规范（schema + 跨Agent消费接口）（v4.0 新增）
-│   │   ├── suspense-grading.md   # 悬念分级（5级体系+多线周期+期待接力）（v4.0 新增）
-│   │   ├── information-cluster.md  # 信息团概念（定义+递进+排版+三层信息差）（v4.0 新增）
-│   │   ├── corpus-baseline.md    # 爆款语料基准（句长/逗号比/对话占比/爽点密度）（v4.0 新增）
-│   │   ├── chapter-meta.md       # 章节元数据侧车（per-chapter meta.json schema）（v4.0 新增）
-│   │   ├── narrative-modules.md  # 叙事元素卡+结构技法卡+情绪模块公式（v4.1 新增）
-│   │   ├── wit-battle.md         # 智斗构型三步两线法（v4.1 新增）
-│   │   ├── adaptation-method.md  # 改编法+三重重复循环检测（v4.1 新增）
-│   │   ├── writing-craft-extras.md  # 身体细节替代情绪词+ recurring props + 三维场景 + 开篇密度（v5.0 新增）
-│   │   ├── plot-special-topics.md   # 特殊题材处理（时间跳越/多POV/群戏/闪回/蒙太奇）（v5.0 新增）
-│   │   ├── genre-formulas.md        # 题材写作公式（打脸/升级/拉情绪/悬疑揭秘/日常装逼）（v5.0 新增）
-│   │   └── quality-checklist.md     # 全流程质量检查清单（开书前/大纲/写前/写后/卷末/发布前）（v5.0 新增）
+│   │   ├── gate-artifacts-spec.md  # 门禁产物规范（schema + 跨Agent消费接口）
+│   │   ├── suspense-grading.md   # 悬念分级（5级体系+多线周期+期待接力）
+│   │   ├── information-cluster.md  # 信息团概念（定义+递进+排版+三层信息差）
+│   │   ├── corpus-baseline.md    # 爆款语料基准（句长/逗号比/对话占比/爽点密度）
+│   │   ├── chapter-meta.md       # 章节元数据侧车（per-chapter meta.json schema）
+│   │   ├── narrative-modules.md  # 叙事元素卡+结构技法卡+情绪模块公式
+│   │   ├── wit-battle.md         # 智斗构型三步两线法
+│   │   ├── adaptation-method.md  # 改编法+三重重复循环检测
+│   │   ├── writing-craft-extras.md  # 身体细节替代情绪词+ recurring props + 三维场景 + 开篇密度
+│   │   ├── plot-special-topics.md   # 特殊题材处理（时间跳越/多POV/群戏/闪回/蒙太奇）
+│   │   ├── genre-formulas.md        # 题材写作公式（打脸/升级/拉情绪/悬疑揭秘/日常装逼）
+│   │   └── quality-checklist.md     # 全流程质量检查清单（开书前/大纲/写前/写后/卷末/发布前）
 │   ├── genres/               # 题材包（可插拔，34 题材 + 九件事正文层规范）
 │   │   ├── INDEX.md               # 路由 + 别名表 + 九件事说明
-│   │   ├── GENRE-PROSE-SPEC.md   # 题材卡九件事正文层规范（v3.0 新增）
+│   │   ├── GENRE-PROSE-SPEC.md   # 题材卡九件事正文层规范
 │   │   └── {题材}.md × 34          # 每题材一张卡（12栏目+九件事，逐步补齐）
 │   └── platforms/            # 平台基线：长篇 + 短篇
 ├── assets/
 │   ├── templates/            # 书籍工程模板（17 个）
 │   ├── agents/               # 编辑团队可部署资产（4 个角色 + README）
-│   └── style_library/        # 风格库（跨书复用）（v4.0 新增）
+│   └── style_library/        # 风格库（跨书复用）
 │       └── index.json         # 风格库索引
 └── scripts/                  # 机械闸口、量化与验证工具（纯标准库，共 46 个）
-    ├── common.py                 # 共享工具函数（文件I/O+文本处理+章节解析）（v6.0 新增）
-    ├── config.py                 # 全局配置常量（目录结构+文件名+BM25参数）（v6.0 新增）
+    ├── common.py                 # 共享工具函数（文件I/O+文本处理+章节解析）
+    ├── config.py                 # 全局配置常量（目录结构+文件名+BM25参数）
     ├── check_text.py             # 7 Gate + 字数 + 禁用词 + 毒句式 + 伏笔超期 + 量化打分 + 7类AI模式检测 + --deslop分级 + --whitelist
     ├── style_fingerprint.py      # 文风指纹六维提取 + 漂移检测
     ├── rhythm_guard.py           # 节奏配额检查（A/B/C + 5+1类事件矩阵 + recommend/record）
@@ -223,19 +182,19 @@ long-novel-skill/
     ├── resume.py                 # 会话恢复报告（欠账门机器查验）
     ├── validate_tracking.py      # 追踪文件格式校验
     ├── outline_anchor.py         # 大纲锚点动态约束注入 + 配额兼容检查
-    ├── story_graph.py            # 知识图谱（节点+边+版本+级联标记+Mermaid导出）（v4.0 新增）
-    ├── research_agent.py         # 联网调研（缺口检测+关键词生成+结构化存储）（v4.0 新增）
-    ├── style_library.py          # 风格库管理（import/search/apply/delete）（v4.0 新增）
-    ├── content_expander.py       # 智能内容扩充引擎（场景/对话/心理/动作/过渡五维策略）（v5.0 新增）
-    ├── context_manager.py        # 长篇上下文管理器（最小上下文选取+预算分配+压缩）（v5.0 新增）
-    ├── novel_flow.py             # 统一流程执行器（status/prepare/write/daily/revise/report）（v5.0 新增）
-    ├── quality_score.py          # 质量评分系统（七维加权+趋势分析）（v5.0 新增）
-    ├── beat_sheet_generator.py   # Beat Sheet分镜表生成器（generate/expand/validate）（v6.0 新增）
-    ├── chapter_synthesizer.py    # 章节合成器（synthesize/check/polish）（v6.0 新增）
-    ├── gate_repair.py            # 门禁修复计划生成器（失败原因分析+最短修复路径）（v6.0 新增）
-    ├── editorial_manager.py      # 编辑团队状态管理器（snapshot/record-review/status/need-human）（v6.0 新增）
-    ├── hooks.py                  # 自动化Hook机制（5个Hook）（v6.0 新增）
-    ├── rag_retriever.py          # RAG检索增强（build/query/status）（v6.0 新增）
+    ├── story_graph.py            # 知识图谱（节点+边+版本+级联标记+Mermaid导出）
+    ├── research_agent.py         # 联网调研（缺口检测+关键词生成+结构化存储）
+    ├── style_library.py          # 风格库管理（import/search/apply/delete）
+    ├── content_expander.py       # 智能内容扩充引擎（场景/对话/心理/动作/过渡五维策略）
+    ├── context_manager.py        # 长篇上下文管理器（最小上下文选取+预算分配+压缩）
+    ├── novel_flow.py             # 统一流程执行器（status/prepare/write/daily/revise/report）
+    ├── quality_score.py          # 质量评分系统（七维加权+趋势分析）
+    ├── beat_sheet_generator.py   # Beat Sheet分镜表生成器（generate/expand/validate）
+    ├── chapter_synthesizer.py    # 章节合成器（synthesize/check/polish）
+    ├── gate_repair.py            # 门禁修复计划生成器（失败原因分析+最短修复路径）
+    ├── editorial_manager.py      # 编辑团队状态管理器（snapshot/record-review/status/need-human）
+    ├── hooks.py                  # 自动化Hook机制（5个Hook）
+    ├── rag_retriever.py          # RAG检索增强（build/query/status）
     └── tests/                    # 默认全量测试套件（收集数见 skill.json）
         ├── run_tests.py              # 测试运行器
         ├── test_common.py            # common.py（36）
@@ -250,7 +209,7 @@ long-novel-skill/
         └── test_outline_anchor.py    # outline_anchor.py（16）
 ```
 
-## 核心能力（v6.1）
+## 核心能力
 
 | 能力 | 一句话 | 依据 |
 |---|---|---|
@@ -260,56 +219,56 @@ long-novel-skill/
 | 情节点预算制 | 密/疏三级 + 字数预算求和校验，防注水防过场 | `craft/plot-budget.md` |
 | 单章写作循环 + 7 Gate 去AI腔 | 读上下文→写→闸口→追踪，7 道闸口去 AI 腔 | `workflow/chapter-loop.md`、`craft/anti-ai-style.md` |
 | 去AI味工程化 | 量化六级分级 + 删除优先 + 比例上限 + 白名单 + 收敛终止 + 三遍法 | `craft/deslop-engineering.md` |
-| **敏感词替换表**（v6.6 新增） | 开书必建：真实地名/机构/人物 → 全书代称，地名代称系统 + 别称置换规则 + 地名脱敏处理；必禁专名并入禁用词.txt 机器拦截 | `craft/sensitive-word-replacement.md`、`templates/sensitive-word-replacement.md` |
+| **敏感词替换表** | 开书必建：真实地名/机构/人物 → 全书代称，地名代称系统 + 别称置换规则 + 地名脱敏处理；必禁专名并入禁用词.txt 机器拦截 | `craft/sensitive-word-replacement.md`、`templates/sensitive-word-replacement.md` |
 | Beat Sheet 多步流水线 | 一章拆 4–8 个 Beat 分镜写，末尾节奏预检 | `workflow/beat-pipeline.md`、`templates/beat-sheet.md` |
 | 短篇五段式 | 短篇单篇情绪闭环结构 | `workflow/short-story-loop.md` |
 | **短篇结尾句工艺** | 短篇默认必加：点睛句（正文最后一行，一句话）/ 彩蛋句（一句隐藏信息）/ 碎碎念（默认一句），一律简短 | `craft/short-story-ending.md`、`workflow/short-story-loop.md` Step 7 |
 | 节奏三档制 + A/B/C 配额 + 事件矩阵5+1类 | 慢/中/快三档，6类事件独立冷却+gentle_window+recommend/record | `craft/pacing-and-hooks.md`、`craft/reverse-brake.md`、`scripts/event_matrix.py` |
-| **语义级节奏审查**（v4.0 新增） | 四维度：档位判断+配额语义核查+悬念质量+隐性加速检测，脚本检测不到的由Claude兜底 | `craft/pacing-review.md` |
+| **语义级节奏审查** | 四维度：档位判断+配额语义核查+悬念质量+隐性加速检测，脚本检测不到的由Claude兜底 | `craft/pacing-review.md` |
 | 反向刹车 | 非终局章禁止解决主线核心矛盾 | `craft/reverse-brake.md` |
 | 读者契约（执行模板 + 深度理论） | 因果权+结算权+终局储备+透支两问+风险三级 | `craft/reader-contract.md`、`craft/reader-contract-deep.md` |
-| 情绪弧线操作手册（v4.0 升级） | 六种弧线 + 情绪引擎四冲程 + 情绪模块八大类 + 长篇情绪引擎因果链 | `craft/emotional-arc.md` |
+| 情绪弧线操作手册 | 六种弧线 + 情绪引擎四冲程 + 情绪模块八大类 + 长篇情绪引擎因果链 | `craft/emotional-arc.md` |
 | 角色设计操作手册 | 三层标签反差 + 九维人设 + 金手指绑架人设 | `craft/character-design.md` |
 | 商业创作核心方法 | 卖点论 + 金手指原理 + 留存四支柱 + 崩盘预警 | `craft/commercial-core.md` |
 | 文风指纹（六维量化）+ 文风协议（整书级视图） | 六维量化 + 锚点片段 + 分层模仿 + confidence | `craft/style-fingerprint.md`、`craft/style-profile.md` |
-| **风格库跨书复用**（v4.0 新增） | import/search/apply/delete，多书写作时跨项目迁移风格 | `workflow/style-library.md`、`scripts/style_library.py` |
+| **风格库跨书复用** | import/search/apply/delete，多书写作时跨项目迁移风格 | `workflow/style-library.md`、`scripts/style_library.py` |
 | 编辑团队协作（8步spawn协议） | 策划主编/写作特工/反AI编辑/连载核实官 + 完整生命周期 | `craft/editorial-team.md`、`workflow/editorial-spawn.md` |
 | 多视角盲评 + 跨Agent审核 | 四视角盲评 + 路由表 + 三维度报告 + P0/P1/P2 + 批处理 + 防死循环 | `craft/review-rubric.md`、`workflow/cross-review.md` |
 | 拆文（轻量四维 + 七阶段工业管道） | 四维统计 + 情绪模块卡 + 节奏权威索引 + 质量阈值 + 恢复机制 | `workflow/deconstruct.md`、`workflow/deconstruct-pipeline.md` |
-| **仿写工作流**（v4.0 新增） | 对标书→拆文→提取→选风格→开书→魔改五步 | `workflow/imitation.md` |
+| **仿写工作流** | 对标书→拆文→提取→选风格→开书→魔改五步 | `workflow/imitation.md` |
 | 扫榜选题（方法论 + 深度执行） | 选题四步 + 读者画像 + 选题决策报告 | `workflow/market-scan.md`、`workflow/market-scan-deep.md` |
 | 导入旧稿（概述 + 深度10步） | 角色状态反推 + 增量导入 + 卷划分用户确认制 | `workflow/import-book.md`、`workflow/import-deep.md` |
-| **联网调研**（v4.0 新增） | 题材维度映射+缺口检测+关键词生成+结构化存储 | `workflow/research.md`、`scripts/research_agent.py` |
+| **联网调研** | 题材维度映射+缺口检测+关键词生成+结构化存储 | `workflow/research.md`、`scripts/research_agent.py` |
 | 全自动写书调度 | plan/run/report + 断点续写 + 自动暂停 | `workflow/auto-write.md` |
 | 交互式脑洞引导 | 5轮收敛 + 压力测试 | `workflow/ideation.md` |
 | 日更 fail-fast 五类资料检查 | 缺失必读资料即停止，输出修复动作 | `workflow/daily-failfast.md` |
 | BM25两级语义检索 | 粗筛BM25 + 精排TF-IDF + 缓存 + 触发判定 + 命中可解释 | `scripts/entity_index.py` |
-| **知识图谱**（v4.0 新增） | 节点+边+版本+级联标记+Mermaid导出+影响分析 | `scripts/story_graph.py` |
-| **章节元数据侧车**（v4.0 新增） | per-chapter meta.json，统一消费方接口 | `craft/chapter-meta.md` |
-| **门禁产物规范**（v4.0 新增） | gate_result.json schema + 跨Agent消费接口 | `craft/gate-artifacts-spec.md` |
-| **对话精通**（v4.0 升级） | 7种决策路由+冲突递进五级+节奏控制+微动作配合 | `craft/dialogue.md` |
-| **悬念分级**（v4.0 新增） | 5级体系+多线周期+期待接力+信息释放节奏 | `craft/suspense-grading.md` |
-| **信息团概念**（v4.0 新增） | 定义+递进+排版+三层信息差 | `craft/information-cluster.md` |
-| **爆款语料基准**（v4.0 新增） | 句长/逗号比/对话占比/爽点密度/情绪转换频率 | `craft/corpus-baseline.md` |
-| **命令入口表**（v4.0 新增） | 30个命令+新手/高级分层 | `workflow/commands.md` |
-| **叙事元素卡+结构技法卡+情绪模块公式**（v4.1 新增） | 10种叙事元素+9种结构技法+11个情绪公式 | `craft/narrative-modules.md` |
-| **智斗构型三步两线法**（v4.1 新增） | 4种构型+三步构建+两线并行 | `craft/wit-battle.md` |
-| **升级循环与多角度强化**（v4.1 新增） | 三级循环+五种强化角度+疲劳防护 | `workflow/book-scaling.md`（升级循环+多角度强章节） |
-| **改编法+三重重复循环检测**（v4.1 新增） | 四步改编+情节/对话/情绪三重检测 | `craft/adaptation-method.md` |
-| **智能内容扩充引擎**（v5.0 新增） | 场景/对话/心理/动作/过渡五维扩充策略+预算分配+压缩算法，解决章节过短问题 | `scripts/content_expander.py` |
-| **长篇上下文管理器**（v5.0 新增） | 最小上下文选取+预算分配+压缩+组件化，解决百万字上下文爆炸 | `scripts/context_manager.py` |
-| **统一流程执行器**（v5.0 新增） | status/prepare/write/daily/revise/report 六命令编排，串起分散工作流 | `scripts/novel_flow.py` |
-| **质量评分系统**（v5.0 新增） | 七维加权评分（AI腔/节奏/文风/情感/结构/对话/可读性）+趋势分析 | `scripts/quality_score.py` |
-| **全流程质量检查清单**（v5.0 新增） | 开书前/大纲/写前/写后/卷末/发布前六阶段检查清单 | `craft/quality-checklist.md` |
-| **题材写作公式**（v5.0 新增） | 打脸/升级/拉情绪/悬疑揭秘/日常装逼五大题材公式 | `craft/genre-formulas.md` |
-| **特殊题材处理**（v5.0 新增） | 时间跳越/多POV切换/群戏/闪回/蒙太奇五类特殊场景 | `craft/plot-special-topics.md` |
-| **Beat Sheet 生成器**（v6.0 新增） | 分镜表自动拆分（3-7 Beat）+五维扩写提示+合成稿校验 | `scripts/beat_sheet_generator.py` |
-| **章节合成器**（v6.0 新增） | Beat 拼接+过渡检测+字数/覆盖度/衔接/钩子/格式五维校验+润色提示 | `scripts/chapter_synthesizer.py` |
-| **门禁修复计划**（v6.0 新增） | 失败原因分析+修复策略映射（禁用词替换+毒句式改写）+最短修复路径 | `scripts/gate_repair.py` |
-| **编辑团队状态管理**（v6.0 新增） | 快照/审核记录/状态查询/人工介入检测（防死循环） | `scripts/editorial_manager.py` |
-| **自动化 Hook 机制**（v6.0 新增） | 5 个 Hook：session-start/guard-outline/check-prose/detect-gaps/pre-compact | `scripts/hooks.py` |
-| **RAG 检索增强**（v6.0 新增） | BM25 两级+增量索引+查询缓存+轻场景跳过+命中可解释+写前上下文建议 | `scripts/rag_retriever.py` |
-| **共享模块**（v6.0 新增） | common.py 工具函数（I/O+文本+章节）+config.py 配置常量（目录+文件名+参数） | `scripts/common.py`、`scripts/config.py` |
+| **知识图谱** | 节点+边+版本+级联标记+Mermaid导出+影响分析 | `scripts/story_graph.py` |
+| **章节元数据侧车** | per-chapter meta.json，统一消费方接口 | `craft/chapter-meta.md` |
+| **门禁产物规范** | gate_result.json schema + 跨Agent消费接口 | `craft/gate-artifacts-spec.md` |
+| **对话精通** | 7种决策路由+冲突递进五级+节奏控制+微动作配合 | `craft/dialogue.md` |
+| **悬念分级** | 5级体系+多线周期+期待接力+信息释放节奏 | `craft/suspense-grading.md` |
+| **信息团概念** | 定义+递进+排版+三层信息差 | `craft/information-cluster.md` |
+| **爆款语料基准** | 句长/逗号比/对话占比/爽点密度/情绪转换频率 | `craft/corpus-baseline.md` |
+| **命令入口表** | 30个命令+新手/高级分层 | `workflow/commands.md` |
+| **叙事元素卡+结构技法卡+情绪模块公式** | 10种叙事元素+9种结构技法+11个情绪公式 | `craft/narrative-modules.md` |
+| **智斗构型三步两线法** | 4种构型+三步构建+两线并行 | `craft/wit-battle.md` |
+| **升级循环与多角度强化** | 三级循环+五种强化角度+疲劳防护 | `workflow/book-scaling.md`（升级循环+多角度强章节） |
+| **改编法+三重重复循环检测** | 四步改编+情节/对话/情绪三重检测 | `craft/adaptation-method.md` |
+| **智能内容扩充引擎** | 场景/对话/心理/动作/过渡五维扩充策略+预算分配+压缩算法，解决章节过短问题 | `scripts/content_expander.py` |
+| **长篇上下文管理器** | 最小上下文选取+预算分配+压缩+组件化，解决百万字上下文爆炸 | `scripts/context_manager.py` |
+| **统一流程执行器** | status/prepare/write/daily/revise/report 六命令编排，串起分散工作流 | `scripts/novel_flow.py` |
+| **质量评分系统** | 七维加权评分（AI腔/节奏/文风/情感/结构/对话/可读性）+趋势分析 | `scripts/quality_score.py` |
+| **全流程质量检查清单** | 开书前/大纲/写前/写后/卷末/发布前六阶段检查清单 | `craft/quality-checklist.md` |
+| **题材写作公式** | 打脸/升级/拉情绪/悬疑揭秘/日常装逼五大题材公式 | `craft/genre-formulas.md` |
+| **特殊题材处理** | 时间跳越/多POV切换/群戏/闪回/蒙太奇五类特殊场景 | `craft/plot-special-topics.md` |
+| **Beat Sheet 生成器** | 分镜表自动拆分（3-7 Beat）+五维扩写提示+合成稿校验 | `scripts/beat_sheet_generator.py` |
+| **章节合成器** | Beat 拼接+过渡检测+字数/覆盖度/衔接/钩子/格式五维校验+润色提示 | `scripts/chapter_synthesizer.py` |
+| **门禁修复计划** | 失败原因分析+修复策略映射（禁用词替换+毒句式改写）+最短修复路径 | `scripts/gate_repair.py` |
+| **编辑团队状态管理** | 快照/审核记录/状态查询/人工介入检测（防死循环） | `scripts/editorial_manager.py` |
+| **自动化 Hook 机制** | 5 个 Hook：session-start/guard-outline/check-prose/detect-gaps/pre-compact | `scripts/hooks.py` |
+| **RAG 检索增强** | BM25 两级+增量索引+查询缓存+轻场景跳过+命中可解释+写前上下文建议 | `scripts/rag_retriever.py` |
+| **共享模块** | common.py 工具函数（I/O+文本+章节）+config.py 配置常量（目录+文件名+参数） | `scripts/common.py`、`scripts/config.py` |
 | **核心脚本测试套件** | 默认全量运行已登记模块；收集数由发布契约核验 | `scripts/tests/run_tests.py` |
 | 题材包可插拔（34题材 + 九件事） | 12栏目设定层 + 九件事正文层 | `genres/INDEX.md`、`genres/GENRE-PROSE-SPEC.md` |
 | 平台适配（长篇+短篇） | 长篇番茄/起点/晋江/飞卢 + 短篇知乎盐言/番茄短篇/七猫短篇 | `platforms/platform-guide.md` |
@@ -331,10 +290,10 @@ long-novel-skill/
 
 ```bash
 # Claude Code（用户级）
-cp -R long-novel-skill ~/.claude/skills/
+cp -R general-novel-skill ~/.claude/skills/
 
 # Codex CLI / 通用路径
-cp -R long-novel-skill ~/.agents/skills/
+cp -R general-novel-skill ~/.agents/skills/
 ```
 
 然后在对话中直接说「开书」「写第 X 章」「写一篇番茄短篇」等即可触发（skill 描述里带触发关键词）。
@@ -383,7 +342,7 @@ R5 收敛事件名称契约：规范名与旧名均能预检、记录和校验�
 旧工程缺人物卡且有明确本人状态时支持带来源说明的 `state_only`；空卡/不可读卡不回退，
 补卡后旧上下文包过期。备份顺序须记录编辑前的目标状态，不能仅凭最终文件声称已证实。
 
-### 1. check_text.py — 7 Gate 机械闸口（v3.0 升级）
+### 1. check_text.py — 7 Gate 机械闸口
 
 ```bash
 # 7 Gate 检测 + 字数 + 禁用词 + 毒句式 + 伏笔超期 + 量化打分 + 7类AI模式检测
@@ -391,14 +350,14 @@ python scripts/check_text.py "正文/第037章_标题.md" \
   --min-chars 2000 --max-chars 3500 \
   --ledger "追踪/伏笔台账.md" --current-chapter 37 --gate-report
 
-# v3.0 新增：去AI味量化分级（六级打分 → 轻/中/重建议）
+# 去AI味量化分级（六级打分 → 轻/中/重建议）
 python scripts/check_text.py "正文/第037章_标题.md" --deslop
 
-# v3.0 新增：白名单豁免词（设定/禁用词.txt 中 ! 前缀的词不检测）
+# 白名单豁免词（设定/禁用词.txt 中 ! 前缀的词不检测）
 python scripts/check_text.py "正文/第037章_标题.md" --whitelist "设定/禁用词.txt"
 ```
 
-v3.0 新增 7 类段落级 AI 模式检测：微动作复读、抽象总结复读、套词密度、解释链密度、监控动作清单、引号强调滥用、工程词泄漏。
+7 类段落级 AI 模式检测：微动作复读、抽象总结复读、套词密度、解释链密度、监控动作清单、引号强调滥用、工程词泄漏。
 
 ### 2. style_fingerprint.py — 文风指纹提取与漂移检测
 
@@ -411,26 +370,26 @@ python scripts/style_fingerprint.py extract "正文/第001章.md" "正文/第002
 python scripts/style_fingerprint.py compare "正文/第037章.md" "设定/文风锚.md"
 ```
 
-### 3. rhythm_guard.py — 节奏配额检查（v3.0 升级）
+### 3. rhythm_guard.py — 节奏配额检查
 
 ```bash
 # 检查本章是否越界（A/B/C 配额 + 5+1类事件矩阵 + 事件冷却 + 档位分布）
 python scripts/rhythm_guard.py \
   --chapter-file "正文/第037章.md" --quota "追踪/节奏配额.md"
 
-# v3.0 新增：为下一章推荐事件类型
+# 为下一章推荐事件类型
 python scripts/rhythm_guard.py --quota "追踪/节奏配额.md" --recommend "快"
 
-# v3.0 新增：记录本章事件
+# 记录本章事件
 python scripts/rhythm_guard.py --quota "追踪/节奏配额.md" --record "conflict"
 
 # 写章前预检声明
 python scripts/rhythm_guard.py --quota "追踪/节奏配额.md" --declare "A,conflict,快"
 ```
 
-v3.0 将事件类型从 A/B/C 三类扩展为 5+1 类：conflict(冲突爽点)/bond(人物羁绊)/faction(势力经营)/world(风土人情)/crisis(危机升级)/revelation(核心秘密)，每类有独立冷却章数和连续上限，新增 gentle_window（每5章至少1次bond或world）。A/B/C 配额向后兼容。
+将事件类型从 A/B/C 三类扩展为 5+1 类：conflict(冲突爽点)/bond(人物羁绊)/faction(势力经营)/world(风土人情)/crisis(危机升级)/revelation(核心秘密)，每类有独立冷却章数和连续上限，新增 gentle_window（每5章至少1次bond或world）。A/B/C 配额向后兼容。
 
-### 4. event_matrix.py — 事件矩阵调度器（v3.0 新增）
+### 4. event_matrix.py — 事件矩阵调度器
 
 ```bash
 # 为下一章推荐事件类型分配（按档位推荐）
@@ -445,7 +404,7 @@ python scripts/event_matrix.py status "{书名目录}"
 
 独立的事件矩阵调度器，数据持久化到 `追踪/event_matrix.json`。与 rhythm_guard.py 双向兼容。
 
-### 5. entity_index.py — BM25 两级语义检索（v3.0 升级）
+### 5. entity_index.py — BM25 两级语义检索
 
 ```bash
 # 每章更新摘要后重建索引（或批量补建）
@@ -454,7 +413,7 @@ python scripts/entity_index.py build "{书名目录}"
 # 写前检索某个实体出现在哪几章
 python scripts/entity_index.py query "{书名目录}" 林雷 盘龙戒指
 
-# v3.0 升级：BM25 两级语义检索（粗筛BM25取top-8 + 精排TF-IDF取top-4 + 缓存 + 命中可解释）
+# BM25 两级语义检索（粗筛BM25取top-8 + 精排TF-IDF取top-4 + 缓存 + 命中可解释）
 python scripts/entity_index.py semantic "{书名目录}" "林雷的战斗场景" "魔法试炼"
 python scripts/entity_index.py semantic "{书名目录}" "与盘龙戒指有关的秘密" --top 5
 
@@ -462,7 +421,7 @@ python scripts/entity_index.py semantic "{书名目录}" "与盘龙戒指有关�
 python scripts/entity_index.py query "{书名目录}" 林雷 --grep
 ```
 
-v3.0 升级为 BM25 两级检索：粗筛用 BM25 评分（k1=1.5, b=0.75）取 top-8 candidate，精排用片段级 TF-IDF 取 top-4。新增查询缓存（`追踪/query_cache.json`）、轻场景触发判定（过场/赶路自动跳过全量检索）、命中原因可解释（输出匹配关键词和得分）、章节元数据读取（`追踪/chapter_meta/第XXX章.meta.json`）。
+升级为 BM25 两级检索：粗筛用 BM25 评分（k1=1.5, b=0.75）取 top-8 candidate，精排用片段级 TF-IDF 取 top-4。新增查询缓存（`追踪/query_cache.json`）、轻场景触发判定（过场/赶路自动跳过全量检索）、命中原因可解释（输出匹配关键词和得分）、章节元数据读取（`追踪/chapter_meta/第XXX章.meta.json`）。
 
 ### 6. deconstruct.py — 拆文辅助
 
@@ -550,7 +509,7 @@ python scripts/outline_anchor.py check "{书名目录}" --chapter 37 --quota A
 
 从章纲提取「禁止揭露/必须达成/阶段定位」三条约束，生成自然语言注入写前上下文；同时检查配额兼容性（本章声明的配额与近3章记录是否冲突）。
 
-### 13. story_graph.py — 知识图谱（v4.0 新增）
+### 13. story_graph.py — 知识图谱
 
 ```bash
 python scripts/story_graph.py build "{书名目录}"
@@ -559,9 +518,9 @@ python scripts/story_graph.py cascade "{书名目录}" --from-chapter 50 --desc 
 python scripts/story_graph.py update "{书名目录}" --chapter 37
 ```
 
-从 `追踪/entity_index.json` + 章节摘要构建节点（角色/事件/地点/物品/势力），提取关系边，支持级联标记（改纲后标记受影响节点）。**v5.0 新增 `update` 子命令**：每章写完后增量更新（只从本章摘要提取新实体和关系追加到图谱），避免全量 rebuild 的代价。
+从 `追踪/entity_index.json` + 章节摘要构建节点（角色/事件/地点/物品/势力），提取关系边，支持级联标记（改纲后标记受影响节点）。`update` 子命令：每章写完后增量更新（只从本章摘要提取新实体和关系追加到图谱），避免全量 rebuild 的代价。
 
-### 14. research_agent.py — 联网调研（v4.0 新增）
+### 14. research_agent.py — 联网调研
 
 ```bash
 python scripts/research_agent.py keywords --genre 历史 --topic "中世纪盔甲"
@@ -572,7 +531,7 @@ python scripts/research_agent.py store "{书名目录}" --dimension "战争装�
 
 脚本提供关键词生成、知识库缺口检测与结构化存储；实际搜索由当次可用联网工具完成。没有搜索结果时不得声称已联网调研。
 
-### 15. style_library.py — 风格库跨书复用（v4.0 新增）
+### 15. style_library.py — 风格库跨书复用
 
 ```bash
 python scripts/style_library.py import "{旧书目录}" --name "旧书A风格"
@@ -584,7 +543,7 @@ python scripts/style_library.py delete "{style_id}"
 
 跨项目导入/搜索/应用/删除文风指纹，多书写作时迁移风格基线。
 
-### 16. content_expander.py — 智能内容扩充引擎（v5.0 新增）
+### 16. content_expander.py — 智能内容扩充引擎
 
 ```bash
 # 分析扩充潜力
@@ -596,7 +555,7 @@ python scripts/content_expander.py analyze "正文/第037章.md" --target 3500 -
 
 五维扩充策略（场景扩充/对话丰富化/心理深化/动作细节/过渡平滑），智能分析文本各维度的扩充潜力，按优先级排序并估算可扩充字数。解决「章节过短」的量化扩充问题。
 
-### 17. context_manager.py — 长篇上下文管理器（v5.0 新增）
+### 17. context_manager.py — 长篇上下文管理器
 
 ```bash
 # 选取目标章节的最小必读上下文
@@ -608,7 +567,7 @@ python scripts/context_manager.py compress "{书名目录}" --from 30 --to 36 --
 
 组件化上下文选取（章纲/人物卡/近章摘要/伏笔台账/设定摘要），按预算比例分配各组件字数，解决百万字长篇的上下文爆炸问题。
 
-### 18. novel_flow.py — 统一流程执行器（v5.0 新增）
+### 18. novel_flow.py — 统一流程执行器
 
 ```bash
 # 诊断书籍工程状态
@@ -626,7 +585,7 @@ python scripts/novel_flow.py revise "{书名目录}" --from-chapter 50 --descrip
 
 编排分散工作流：status（诊断）→ prepare（写前准备）→ write（单章写作）→ daily（日更批量）→ revise（改纲级联）→ report（进度报告）。fail-fast 机制：检查不过不继续下一章。
 
-### 19. quality_score.py — 质量评分系统（v5.0 新增）
+### 19. quality_score.py — 质量评分系统
 
 ```bash
 # 评分单章（Markdown 报告）
@@ -638,7 +597,7 @@ python scripts/quality_score.py trend --book-dir "." --from 30 --to 40 --markdow
 
 七维加权评分（AI腔控制 20% / 节奏控制 15% / 文风一致性 15% / 情感冲击力 15% / 结构完整性 15% / 对话质量 10% / 可读性 10%），总分 0-100 分，A/B/C/D/F 五级。评分结果落盘 `追踪/质量评分/quality_ch{N}.json`，支持趋势分析。
 
-### 20. beat_sheet_generator.py — Beat Sheet 分镜表生成器（v6.0 新增）
+### 20. beat_sheet_generator.py — Beat Sheet 分镜表生成器
 
 ```bash
 # 从章纲生成 Beat Sheet（按场景/情绪转折拆分为 3-7 个 Beat）
@@ -653,7 +612,7 @@ python scripts/beat_sheet_generator.py validate "{书名目录}" --chapter 37 --
 
 将复杂章节拆解为多个 Beat（节拍），每个 Beat 是独立叙事单元。配合 `workflow/beat-pipeline.md` 工作流，解决 AI 单次生成长章节时压缩剧情、跳过细节的问题。Beat Sheet 产出存入 `追踪/beat_sheets/beat_ch{N}.json`；expand 产出五维扩写提示直接输出到终端；validate 产出校验报告并更新 Beat Sheet 的 validation 字段。
 
-### 21. chapter_synthesizer.py — 章节合成器（v6.0 新增）
+### 21. chapter_synthesizer.py — 章节合成器
 
 ```bash
 # 拼接 Beat 片段为完整章节，检测衔接
@@ -668,7 +627,7 @@ python scripts/chapter_synthesizer.py polish "{书名目录}" --chapter 37
 
 将 Beat Sheet 流水线产出的多个 Beat 片段合成为完整章节，对应 `workflow/beat-pipeline.md` 的 Step 4。synthesize 按序拼接并检测 Beat 间衔接；check 做字数/覆盖度/衔接/钩子/格式五维校验输出报告 JSON；polish 识别 Beat 边界生成过渡润色提示（Markdown）。
 
-### 22. gate_repair.py — 门禁修复计划生成器（v6.0 新增）
+### 22. gate_repair.py — 门禁修复计划生成器
 
 ```bash
 # 读取门禁报告生成最短修复路径
@@ -683,7 +642,7 @@ python scripts/gate_repair.py "{书名目录}" --chapter 37 --markdown
 
 当章节门禁检查失败时，自动分析失败原因并生成最短修复路径：读取门禁报告 → 按严重度分类（blocking/advisory）→ 为每个 blocking 问题生成修复建议（内置禁用词替换表 + 毒句式改写方向）→ 生成最短修复路径（优先修复高影响问题，合并相关问题）→ 输出 `追踪/门禁/repair_plan_ch{N}.md`。
 
-### 23. editorial_manager.py — 编辑团队状态管理器（v6.0 新增）
+### 23. editorial_manager.py — 编辑团队状态管理器
 
 ```bash
 # 生成上下文快照 JSON（供编辑团队启动）
@@ -701,7 +660,7 @@ python scripts/editorial_manager.py need-human "{书名目录}"
 
 管理多 Agent 协作写作流程的状态。snapshot 生成编辑团队启动上下文快照；record-review 追加审核结果到 `追踪/review_history.json`；status 输出表格格式状态报告；need-human 检测防死循环（单章返工上限 2 次、连续条件通过 3 章强制人工介入）。对应 `workflow/editorial-spawn.md` 的 Step 1 与 Step 7。
 
-### 24. hooks.py — 自动化 Hook 机制（v6.0 新增）
+### 24. hooks.py — 自动化 Hook 机制
 
 ```bash
 # 会话开始时显示进度快照
@@ -722,7 +681,7 @@ python scripts/hooks.py pre-compact "{书名目录}"
 
 五个自动化 Hook，适配本 skill 四目录文件结构（正文/大纲/追踪/设定）：session-start（进度快照）、guard-outline（大纲存在性校验）、check-prose（正文轻量扫描，含毒句式 + 元信息泄漏）、detect-gaps（设定缺口检测）、pre-compact（压缩前快照）。
 
-**机械部署（v7.0 新增，Claude Code）**：hooks.py 的上述子命令原靠模型自觉调用，v7.0 起提供平台级机械强制——`hook_entry.py`（事件分发器）+ `deploy_hooks.py`（settings.json 注册器）：
+**机械部署（Claude Code）**：hooks.py 的上述子命令原靠模型自觉调用，起提供平台级机械强制——`hook_entry.py`（事件分发器）+ `deploy_hooks.py`（settings.json 注册器）：
 
 ```bash
 # 在书籍工程目录内执行，把 4 类 hook 注册进 .claude/settings.json（幂等，自动备份）
@@ -734,7 +693,7 @@ python scripts/deploy_hooks.py "{书名目录}" --uninstall
 
 注册后，PreToolUse 在「无章纲写正文」时平台级阻断（exit 2），PostToolUse 在「毒句式欠账未清」时阻断，SessionStart/PreCompact 自动做进度/压缩前快照。全程 fail-open（Python/脚本缺失、无法定位书目录时静默放行），正文文件含 `<!-- lns:skip -->` 时跳过检查。多书切换可用 `LNS_BOOK_DIR` 环境变量或项目根 `.active-book` 指定活跃书。
 
-### 25. rag_retriever.py — RAG 检索增强（v6.0 新增）
+### 25. rag_retriever.py — RAG 检索增强
 
 ```bash
 # 构建章节级 RAG 索引（章节号/标题/摘要/实体/字数/情绪）
@@ -752,7 +711,7 @@ python scripts/rag_retriever.py status "{书名目录}"
 
 基于 `entity_index.py` 的 BM25 检索能力增强，侧重语义级相关章节检索。build 构建章节级 RAG 索引；query 两级 BM25+TF-IDF 检索输出可解释结果 + 写前上下文建议（`追踪/next_plot_context.md`），轻场景触发判定（赶路/过场自动跳过全量检索），查询缓存 + 命中可解释；status 输出索引覆盖率与缓存命中率。与 entity_index.py 互补使用。
 
-### 26. common.py — 共享工具函数（v6.0 新增）
+### 26. common.py — 共享工具函数
 
 ```python
 from common import read_text, write_text, count_chinese_chars, parse_chapter_number, find_book_dir
@@ -760,7 +719,7 @@ from common import read_text, write_text, count_chinese_chars, parse_chapter_num
 
 所有脚本共享的工具函数集合：文件 I/O（read_text/write_text/read_json/write_json）、文本处理（count_chinese_chars/split_paragraphs/normalize_whitespace/truncate_text）、章节解析（parse_chapter_number/find_book_dir）等。集中管理通用逻辑，减少重复代码，默认 utf-8-sig 编码兼容 BOM。
 
-### 27. config.py — 全局配置常量（v6.0 新增）
+### 27. config.py — 全局配置常量
 
 ```python
 from config import SKILL_VERSION, BOOK_DIRS, TRACKING_FILES, SETTING_FILES
@@ -768,7 +727,7 @@ from config import SKILL_VERSION, BOOK_DIRS, TRACKING_FILES, SETTING_FILES
 
 全局配置常量集中管理：SKILL_VERSION/SKILL_NAME、书籍工程目录结构（BOOK_DIRS）、追踪/设定文件名（TRACKING_FILES/SETTING_FILES）、章节命名格式、BM25 参数等。修改一处即全局生效，避免散落在各脚本中的魔法数字。
 
-## 本地可编辑 Dashboard（v8.0）
+## 本地可编辑 Dashboard
 
 ```bash
 python scripts/dashboard.py "书籍工程目录"
@@ -802,7 +761,7 @@ POST/DELETE 还要求严格同源 Origin 和每次服务启动独立的 `X-Dashb
 单独运行；`test_dashboard` 也会自动调用（无 Node 时明确跳过）。使用 Node 18+ 的本机或 CI 可运行，
 不需 npm 安装依赖。
 
-## 测试套件（scripts/tests/，v6.0 新增）
+## 测试套件（scripts/tests/）
 
 `scripts/tests/` 是核心脚本与发布契约的测试套件，纯标准库（unittest）。默认 runner 全量运行；收集数由 `skill.json` 与发布契约自动核对，跨平台流水线另做多版本冒烟验证。下列为代表性模块：
 
@@ -831,7 +790,7 @@ python scripts/tests/run_tests.py test_common test_check_text
 `run_tests.py` 是测试运行器，逐模块及末尾分别汇总通过、跳过和失败；skip不计入实际执行通过，
 也不会单独令整套测试失败。退出码 0 无失败 / 1 有失败 / 2 参数错误。详细原因查看pytest或unittest报告。
 
-## 编辑团队（assets/agents/，v2.1 新增）
+## 编辑团队（assets/agents/）
 
 `references/craft/editorial-team.md` 是方法论，`assets/agents/` 是让它真正跑起来的四个
 agent 定义文件 + 部署/降级/防死循环协议。

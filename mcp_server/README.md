@@ -1,4 +1,4 @@
-# long-novel-skill MCP Server
+# general-novel-skill MCP Server
 
 将小说创作技能封装为MCP Server，支持任何MCP客户端（Claude Desktop、TRAE、Cursor、VS Code、Continue等）调用。
 
@@ -31,9 +31,9 @@ python server.py --http --port 8000
 ```json
 {
   "mcpServers": {
-    "long_novel_skill": {
+    "general_novel_skill": {
       "command": "python",
-      "args": ["D:/path/to/long-novel-skill/mcp_server/server.py"]
+      "args": ["D:/path/to/general-novel-skill/mcp_server/server.py"]
     }
   }
 }
@@ -44,9 +44,9 @@ python server.py --http --port 8000
 ```json
 {
   "mcpServers": {
-    "long_novel_skill": {
+    "general_novel_skill": {
       "command": "python",
-      "args": ["D:/path/to/long-novel-skill/mcp_server/server.py"]
+      "args": ["D:/path/to/general-novel-skill/mcp_server/server.py"]
     }
   }
 }
@@ -57,9 +57,9 @@ python server.py --http --port 8000
 ```json
 {
   "mcpServers": {
-    "long_novel_skill": {
+    "general_novel_skill": {
       "command": "python",
-      "args": ["D:/path/to/long-novel-skill/mcp_server/server.py"]
+      "args": ["D:/path/to/general-novel-skill/mcp_server/server.py"]
     }
   }
 }
@@ -71,9 +71,9 @@ python server.py --http --port 8000
 {
   "mcpServers": [
     {
-      "name": "long_novel_skill",
+      "name": "general_novel_skill",
       "command": "python",
-      "args": ["D:/path/to/long-novel-skill/mcp_server/server.py"]
+      "args": ["D:/path/to/general-novel-skill/mcp_server/server.py"]
     }
   ]
 }

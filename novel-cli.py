@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-novel-cli — long-novel-skill 统一命令行入口
+novel-cli — general-novel-skill 统一命令行入口
 让人类作者无需 AI Agent 也能直接使用核心功能
 
 用法:
@@ -272,7 +272,7 @@ def cmd_package(args):
 def show_help():
     """显示帮助"""
     print("""
-novel-cli — long-novel-skill 统一命令行入口 v8.2.0
+novel-cli — general-novel-skill 统一命令行入口 v8.2.0
 
 用法:
     python novel-cli.py <命令> [参数]

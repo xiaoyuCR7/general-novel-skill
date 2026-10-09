@@ -1,4 +1,4 @@
-# long-novel-skill 跨平台安装脚本 (PowerShell)
+# general-novel-skill 跨平台安装脚本 (PowerShell)
 # 支持: Claude Code, TRAE, Cursor, Codex, OpenCode, Gemini CLI, Antigravity
 
 param(
@@ -7,7 +7,7 @@ param(
     [switch]$Help
 )
 
-$SkillName = "long-novel-skill"
+$SkillName = "general-novel-skill"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # 颜色函数

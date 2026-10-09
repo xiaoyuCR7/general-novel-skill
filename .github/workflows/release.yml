@@ -75,9 +75,9 @@ jobs:
       - name: 创建 Release
         uses: softprops/action-gh-release@v2
         with:
-          name: long-novel-skill ${{ github.ref_name }}
+          name: general-novel-skill ${{ github.ref_name }}
           body: |
-            # long-novel-skill ${{ github.ref_name }}
+            # general-novel-skill ${{ github.ref_name }}
 
             ## 安装方式
 
