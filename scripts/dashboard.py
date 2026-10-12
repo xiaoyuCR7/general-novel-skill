@@ -258,19 +258,31 @@ def recoverable_delete(
 # 数据收集函数（所有函数都是只读的，不修改书籍工程）
 # =============================================================================
 
+def _split_title(text: str, fallback: str):
+    """返回 (章节标题, 正文)。首行是章节标题时不计入正文字数。"""
+    lines = text.splitlines()
+    if lines:
+        first = lines[0].strip().lstrip("#").strip()
+        if lines[0].lstrip().startswith("#") or re.match(r"^第\s*[0-9一二三四五六七八九十百千]+\s*章", first):
+            return first or fallback, "\n".join(lines[1:])
+    return fallback, text
+
+
 def _collect_status(book_dir: Path) -> Dict[str, Any]:
     """收集书籍工程总览状态。"""
-    last_chapter = common.find_latest_chapter(book_dir) or 0
+    # 「最新章节」指已写出的正文，不把只有章纲的后续章算进去。
+    last_chapter = 0
 
-    # 统计总字数
+    # 统计总字数（正文，不含标题行）
     total_chars = 0
     chapter_count = 0
     prose_dir = book_dir / "正文"
     if prose_dir.exists():
         for f in sorted(prose_dir.glob("*.md")):
             text = common.read_text(f) or ""
-            total_chars += common.count_chars(text)
+            total_chars += common.count_chars(_split_title(text, f.stem)[1])
             chapter_count += 1
+            last_chapter = max(last_chapter, common.parse_chapter_number(f.name) or 0)
 
     # 门禁状态（最新章节）
     gate_passed = None
@@ -297,6 +309,7 @@ def _collect_status(book_dir: Path) -> Dict[str, Any]:
         "daily_avg": int(daily_avg),
         "gate_passed": gate_passed,
         "last_gate_chapter": last_gate_ch,
+        "foreshadow_count": len(_collect_foreshadowing(book_dir)),
     }
 
 
@@ -314,7 +327,8 @@ def _collect_chapters(book_dir: Path) -> List[Dict[str, Any]]:
         if ch_no is None:
             continue
         text = common.read_text(f) or ""
-        chars = common.count_chars(text)
+        title, body = _split_title(text, f.stem)
+        chars = common.count_chars(body)
 
         # 门禁结果
         gate_passed = None
@@ -327,7 +341,7 @@ def _collect_chapters(book_dir: Path) -> List[Dict[str, Any]]:
 
         chapters.append({
             "chapter": ch_no,
-            "title": f.stem,
+            "title": title,
             "file": str(f.name),
             "chars": chars,
             "gate_passed": gate_passed,
@@ -356,16 +370,34 @@ def _collect_foreshadowing(book_dir: Path) -> List[Dict[str, Any]]:
         return []
 
     text = common.read_text(ledger_path) or ""
-    entries = common.parse_foreshadow_ledger(text)
+    # 台账按四节分态：🔴 超期 / 🟡 活跃 / 🟢 长线 / ✅ 已回收；状态取自所在小节。
+    sections = (("🔴", "激活", True), ("🟡", "激活", False), ("🟢", "埋设", False), ("✅", "回收", False))
+
+    def chapter_no(cell):
+        match = re.search(r"\d+", cell or "")
+        return int(match.group(0)) if match else None
+
     result = []
-    for e in entries:
+    state, overdue = "埋设", False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            for mark, name, is_overdue in sections:
+                if mark in stripped:
+                    state, overdue = name, is_overdue
+            continue
+        if not stripped.startswith("|"):
+            continue
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if not cells or not re.match(r"^F\d+-\d+$", cells[0]):
+            continue
         result.append({
-            "id": e.get("id", ""),
-            "content": e.get("content", ""),
-            "state": e.get("state", "未知"),  # 埋设/激活/回收/废弃
-            "planted_ch": e.get("planted_chapter"),
-            "recycled_ch": e.get("recycled_chapter"),
-            "overdue": e.get("overdue", False),
+            "id": cells[0],
+            "content": cells[1] if len(cells) > 1 else "",
+            "state": state,  # 埋设/激活/回收
+            "planted_ch": chapter_no(cells[2]) if len(cells) > 2 else None,
+            "recycled_ch": chapter_no(cells[3]) if state == "回收" and len(cells) > 3 else None,
+            "overdue": overdue,
         })
     return result
 

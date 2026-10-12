@@ -1,0 +1,33 @@
+{
+  "chapter": 2,
+  "chapter_file": "第002章.md",
+  "chapter_mtime": 1791823309.5071182,
+  "chapter_sha256": "35037c81a7c8ad31d62ce3a04d2ac3dc5816e8f433c142bc50a6110ea1ab09e5",
+  "checked_at": "2026-10-12T12:42:36",
+  "passed": true,
+  "blocking": 0,
+  "advisory": 1,
+  "ai_score": 0.4,
+  "categories": {
+    "banned_blocking": 0,
+    "banned_advisory": 0,
+    "toxic_blocking": 0,
+    "toxic_advisory": 0,
+    "gate_c": 0,
+    "gate_g_meta_refusal": 0,
+    "trailer": 0,
+    "density_advisory": 0,
+    "structure_advisory": 1,
+    "para_tics_advisory": 0,
+    "gate_f": 0,
+    "degradation_advisory": 0
+  },
+  "style_exemptions": [],
+  "rhythm": {
+    "passed": true,
+    "fails": 0,
+    "warns": 0,
+    "declare": "配额 无，事件 revelation，档位 中",
+    "checked_at": "2026-10-12T12:42:37"
+  }
+}

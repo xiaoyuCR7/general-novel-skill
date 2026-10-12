@@ -339,6 +339,7 @@ async function loadStatus(){
     const s=await api('/api/status');
     document.getElementById('book-name').textContent=s.book_name;
     document.getElementById('update-time').textContent=fmtTime();
+    if(typeof s.foreshadow_count==='number')document.getElementById('tab-foreshadow-count').textContent=s.foreshadow_count;
 
     const gateClass=s.gate_passed===null?'pending':(s.gate_passed?'good':'bad');
     const gateText=s.gate_passed===null?'未检查':(s.gate_passed?'全部通过':'有未通过');

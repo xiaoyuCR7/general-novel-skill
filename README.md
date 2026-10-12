@@ -1,8 +1,66 @@
 # general-novel-skill
 
-通用小说创作 agent skill（长篇 + 短篇），**v8.2.0**。核心只装通用写作工艺（工作流 + 模板 + 禁区清单），
-题材规则（34 题材 + 九件事正文层规范）与平台规则（长篇番茄/起点/晋江/飞卢 + 短篇知乎盐言/番茄短篇/七猫短篇）
-做成可插拔的参考文件，按需加载。
+写长篇网文的 agent skill（**v8.2.0**）：正文和设定一起提交，追踪表里的每条事实都查得到正文出处，
+去 AI 味不把好句子改坏。适用于 Claude Code、Codex、Cursor、OpenCode 等支持 skill 的客户端。
+
+![本地 Dashboard：章节、字数、门禁与伏笔一屏看清](assets/screenshots/dashboard.png)
+
+## 它解决什么
+
+- **写着写着吃书**：每章是一次事务，正文与章节摘要、角色状态、伏笔台账、时间线、节奏配额一起提交，
+  失败自动回滚；追踪表的每条变更都要附一段能在正文里逐字找到的原文。
+- **一股 AI 味，越改越干**：7 道闸口定位套路句式，按“这句有没有用”判断改不改；
+  同时防住改过头的另一种腔调（碎句、一行一段、成片的身体反应套词、叙述者替读者总结）。
+- **断更之后接不上**：一条命令说清写到第几章、欠什么账、下一章章纲在不在。
+- **大纲被悄悄改写**：章纲不锁定进不了写作流程；锁定后只增不改。
+
+## 30 秒上手
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill
+```
+
+装好后在对话里直接说：
+
+> 先写一章看看：都市异能，外卖骑手能看见别人头顶的寿命倒计时。
+
+skill 会问清缺的信息，给出 3–5 个情节点的迷你章纲，确认后写出草稿并做一次机器自检。
+决定连载后再说「开书」，进入带追踪和事务的完整流程。
+
+Claude Code 用户也可以走插件市场，装完即有斜杠命令：
+
+```text
+/plugin marketplace add xiaoyuCR7/general-novel-skill
+/plugin install general-novel-skill@general-novel-skill
+```
+
+| 命令 | 做什么 |
+|---|---|
+| `/general-novel-skill:try` | 试写一章，不建工程 |
+| `/general-novel-skill:init` | 开书：定位、设定、总纲、卷纲、首批章纲 |
+| `/general-novel-skill:write` | 写下一章，正文与追踪一起提交 |
+| `/general-novel-skill:deslop` | 去 AI 味，最小修订 |
+| `/general-novel-skill:review` | 审稿，只报告不改稿 |
+| `/general-novel-skill:resume` | 断更恢复 |
+
+## 看效果
+
+示例书 [`demo/看见倒计时的骑手/`](demo/看见倒计时的骑手/README.md) 是用完整流程写出来的两章连载，
+正文、章纲、设定和五张追踪表都在里面。第 1 章里的一段：
+
+> “阿姨，把链子摘了，我背您下去。”
+>
+> “我不去。你们这号人社区讲过，先说人有病，再往外头领。”她攥着衣裳的手没松，“救护车拉一趟多少钱你知道吗？”
+>
+> “不知道。反正比火化便宜。”
+
+去 AI 味的前后对照（同一场戏，blocking 9 → 0，附逐处修改理由和复现命令）见
+[`demo/deslop-before-after/`](demo/deslop-before-after/README.md)。
+
+## 支持范围
+
+核心只装通用写作工艺（工作流 + 模板 + 禁区清单），题材规则（34 题材 + 九件事正文层规范）与平台规则
+（长篇番茄/起点/晋江/飞卢 + 短篇知乎盐言/番茄短篇/七猫短篇）做成可插拔的参考文件，按需加载。
 
 玄幻、修仙、武道、系统等题材按作品内设定创作与审核，允许复生、瞬移、无代价奖励等超现实机制；
 不把现实法律或科学作为剧情可行性的门槛。题材惯例服从作者路线，保留内部因果和能力条件的一致性。
@@ -33,29 +91,7 @@
 
 general-novel-skill 支持在多个 AI 客户端平台使用：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。
 
-### 命令行安装（推荐）
-
-仓库根目录就是一个标准 skill，可用通用安装器一条命令装到已检测到的客户端：
-
-```bash
-npx skills add xiaoyuCR7/general-novel-skill
-```
-
-Claude Code 也可以通过插件市场安装，后续用 `/plugin` 更新：
-
-```text
-/plugin marketplace add xiaoyuCR7/general-novel-skill
-/plugin install general-novel-skill@general-novel-skill
-```
-
-### 先试写一章（轻量模式）
-
-不想先建书籍工程时，直接说“先写一章看看”或“帮我试个开头”。skill 会问五个问题
-（题材平台、主角与阻碍、核心看点、这一章的事、文风参照），给出 3–5 个 beats 的迷你章纲，
-确认后写出草稿并做一次机器自检。交付物标为「草稿，未入事务」；决定连载后再升级为完整工程。
-流程见 `references/workflow/quick-start.md`。
-
-去 AI 味的前后对照与可复现的机器结果见 `demo/deslop-before-after/`。
+命令行安装、插件市场与试写见上文「30 秒上手」。下面是脚本安装与手动安装。
 
 ### 一键安装
 
@@ -123,6 +159,8 @@ cp assets/agents/*.md {书籍工程根}/.trae/agents/
 
 ```
 general-novel-skill/
+├── .claude-plugin/           # Claude Code 插件与市场清单
+├── commands/                 # 斜杠命令（try/init/write/deslop/review/resume）
 ├── SKILL.md                  # 核心入口：触发条件、工作流总览、Iron Law、题材/平台加载协议
 ├── references/
 │   ├── workflow/             # 工作流（当前 30 个，含无工程试写的 quick-start.md）

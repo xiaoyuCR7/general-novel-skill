@@ -8,7 +8,7 @@
     {
       "name": "general-novel-skill",
       "source": "./",
-      "description": "中文网文长篇/短篇创作：大纲、连载追踪、节奏控制、去 AI 味与中断恢复"
+      "description": "写长篇网文的 agent skill：正文与追踪一起提交，每条设定都查得到正文出处，去 AI 味不把好句子改坏"
     }
   ]
 }

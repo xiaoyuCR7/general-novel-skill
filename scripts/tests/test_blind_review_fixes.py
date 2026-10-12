@@ -44,6 +44,35 @@ class TestNotReadyPacket(unittest.TestCase):
         self.assertFalse(result["ready"])
 
 
+class TestDashboardFacts(unittest.TestCase):
+    LEDGER = "\n".join([
+        "## 🟡 活跃", "", "| ID | 伏笔内容 | 埋设章节 | 预期回收 |", "|---|---|---|---|",
+        "| F1-02 | 头顶的数 | 第1章 | 第8章 |", "",
+        "## ✅ 已回收（归档）", "", "| ID | 伏笔内容 | 埋设章节 | 回收章节 |", "|---|---|---|---|",
+        "| F1-03 | 钥匙 | 第1章 | 第2章 |", "",
+    ])
+
+    def test_status_counts_written_chapters_and_reads_titles_and_ledger(self):
+        import dashboard
+        with tempfile.TemporaryDirectory() as directory:
+            book = Path(directory) / "book"
+            for sub in ("正文", "大纲", "追踪"):
+                (book / sub).mkdir(parents=True)
+            (book / "正文" / "第001章.md").write_text("第1章 十七分钟\n\n雨下得很大。\n", encoding="utf-8")
+            (book / "大纲" / "章纲_第005章.md").write_text("# 章纲：第5章\n", encoding="utf-8")
+            (book / "追踪" / "伏笔台账.md").write_text(self.LEDGER, encoding="utf-8")
+            status = dashboard._collect_status(book)
+            self.assertEqual(status["last_chapter"], 1)
+            self.assertEqual(status["total_chars"], len("雨下得很大。"))
+            self.assertEqual(status["foreshadow_count"], 2)
+            chapters = dashboard._collect_chapters(book)
+            self.assertEqual(chapters[0]["title"], "第1章 十七分钟")
+            ledger = dashboard._collect_foreshadowing(book)
+            self.assertEqual([(e["id"], e["state"], e["planted_ch"], e["recycled_ch"]) for e in ledger],
+                             [("F1-02", "激活", 1, None), ("F1-03", "回收", 1, 2)])
+            self.assertEqual(ledger[0]["content"], "头顶的数")
+
+
 class TestOutlineLock(unittest.TestCase):
     def make_book(self, directory, outline_text):
         book = Path(directory) / "book"
