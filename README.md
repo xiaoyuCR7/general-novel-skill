@@ -129,7 +129,7 @@ general-novel-skill/
 │   ├── craft/                # 通用写作工艺（当前 50 个）
 │   │   ├── iron-law.md           # 七条铁律
 │   │   ├── anti-ai-style.md      # 7 Gate 去AI腔（判定标准）
-│   │   ├── deslop-engineering.md  # 去AI味工程化（量化分级+删除优先+比例上限+白名单+收敛终止）
+│   │   ├── deslop-engineering.md  # 去AI味工程化（机器输出判读+删除优先+两遍式+删改上限+改过头信号）
 │   │   ├── sensitive-word-replacement.md  # 敏感词替换（地名代称/别称置换/地名脱敏）
 │   │   ├── pacing-and-hooks.md   # 节奏三档制 + A/B/C 配额
 │   │   ├── pacing-review.md      # 语义级节奏审查（四维度）
@@ -218,7 +218,7 @@ general-novel-skill/
 | 深度结构理论 | 三级结构选择 + 五幕因果链 + 对标节奏迁移1/4·中点·3/4 | `craft/outline-structure-theory.md` |
 | 情节点预算制 | 密/疏三级 + 字数预算求和校验，防注水防过场 | `craft/plot-budget.md` |
 | 单章写作循环 + 7 Gate 去AI腔 | 读上下文→写→闸口→追踪，7 道闸口去 AI 腔 | `workflow/chapter-loop.md`、`craft/anti-ai-style.md` |
-| 去AI味工程化 | 量化六级分级 + 删除优先 + 比例上限 + 白名单 + 收敛终止 + 三遍法 | `craft/deslop-engineering.md` |
+| 去AI味工程化 | 机器输出判读 + 删除优先三关 + 两遍式 + 删改上限 + 改过头信号 + 共享两轮修复额度 | `craft/deslop-engineering.md` |
 | **敏感词替换表** | 开书必建：真实地名/机构/人物 → 全书代称，地名代称系统 + 别称置换规则 + 地名脱敏处理；必禁专名并入禁用词.txt 机器拦截 | `craft/sensitive-word-replacement.md`、`templates/sensitive-word-replacement.md` |
 | Beat Sheet 多步流水线 | 一章拆 4–8 个 Beat 分镜写，末尾节奏预检 | `workflow/beat-pipeline.md`、`templates/beat-sheet.md` |
 | 短篇五段式 | 短篇单篇情绪闭环结构 | `workflow/short-story-loop.md` |

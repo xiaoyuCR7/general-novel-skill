@@ -113,7 +113,7 @@ def split_sentences(text: str) -> List[str]:
 
 def extract_dialogue(text: str) -> str:
     """提取对话内容（引号内）。"""
-    quotes = re.findall(r'[""「」『』]([^""「」『』]+)[""「」『』]', text)
+    quotes = re.findall(r'[""\u201c\u201d「」『』]([^""\u201c\u201d「」『』]+)[""\u201c\u201d「」『』]', text)
     return "\n".join(quotes)
 
 
@@ -155,7 +155,7 @@ def statistical_issue(issue: str) -> str:
 # 维度1：AI腔控制评分（复用 check_text.py 逻辑）
 # =========================================================
 
-# 禁用词清单（子集，与 anti-ai-style.md 同步）
+# 统计用高频套词（本脚本独立的统计词表，不是机器门禁词；门禁词以 check_text.py 的 BANNED_WORDS 为准）
 AI_HIGH_FREQ_WORDS = [
     "不禁", "缓缓", "微微", "嘴角勾起", "眼中闪过", "深吸一口气",
     "不由得", "仿佛", "宛如", "犹如", "心头一震", "瞳孔一缩",
@@ -193,7 +193,7 @@ def score_ai_control(text: str) -> Dict[str, Any]:
     # 叙述/对话分离
     dialogue = extract_dialogue(text)
     narration = text
-    for q in re.findall(r'[""「」『』][^""「」『』]+[""「」『』]', text):
+    for q in re.findall(r'[""\u201c\u201d「」『』][^""\u201c\u201d「」『』]+[""\u201c\u201d「」『』]', text):
         narration = narration.replace(q, "")
 
     # 1. 禁用词密度
@@ -243,7 +243,7 @@ def score_ai_control(text: str) -> Dict[str, Any]:
     tag_words = ["说道", "问道", "答道", "喊道", "笑道", "怒道", "冷道",
                  "低声道", "大声道", "轻声道"]
     tag_count = sum(text.count(t) for t in tag_words)
-    dialogue_sentences = len(re.findall(r'[""「」『』][^""「」『』]+[""「」『』]', text))
+    dialogue_sentences = len(re.findall(r'[""\u201c\u201d「」『』][^""\u201c\u201d「」『』]+[""\u201c\u201d「」『』]', text))
     tag_density = tag_count / dialogue_sentences if dialogue_sentences > 0 else 0
 
     # 7. 结尾升华检测
@@ -782,7 +782,7 @@ def score_dialogue(text: str) -> Dict[str, Any]:
     non_ws, cjk = count_chars(text)
 
     # 提取对话
-    dialogue_matches = re.findall(r'([""「」『』])([^""「」『』]+)\1', text)
+    dialogue_matches = re.findall(r'([""\u201c\u201d「」『』])([^""\u201c\u201d「」『』]+)\1', text)
     if not dialogue_matches:
         return {"score": 70, "details": {"dialogue_count": 0}, "issues": ["无对话"]}
 

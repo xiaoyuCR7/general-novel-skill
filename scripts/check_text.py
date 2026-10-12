@@ -107,7 +107,7 @@ except Exception:  # 导入失败时退回内置三维度统计，保证脚本�
     sf = None
     _HAS_SF = False
 
-# 一级禁用词（与 references/craft/anti-ai-style.md 第二节保持一致，改动需同步）
+# 一级禁用词（本表是机器禁词的唯一来源；anti-ai-style.md「Gate A/B」一节照此列出，改动需同步）
 BANNED_WORDS = [
     "仿佛", "似乎", "不禁", "不由得", "一丝",
     "眼底闪过", "嘴角勾起", "嘴角上扬", "意味深长", "若有所思",
@@ -115,15 +115,26 @@ BANNED_WORDS = [
     "众所周知", "值得一提", "不得不说",
 ]
 
+# 内置短语豁免：禁用词作为固定成语/词组的一部分时不是 AI 口癖。
+# 与书籍白名单的短语规则相同：只豁免该短语所在行的对应词命中。
+BUILTIN_PHRASE_WHITELIST = frozenset({"一丝不苟", "一丝不挂", "一丝不乱"})
+
+# 单字「无」只有作独立否定词时才参与否定排比；「无奈/无数/无论…」等复合词不算。
+_NEG = r"(?:没有|无(?![奈数论法比限聊意疑非须需辜关所能力线敌双上边穷尽常]))"
+
 # 毒句式（正则模式 + 说明）——叙述域 blocking，对话域 advisory
 TOXIC_PATTERNS = [
     (re.compile(r"不是[^。！？\n]{1,30}[，,][^。！？\n]{0,12}而是"), "not-is-comparison", "「不是A，而是B」句式"),
     (re.compile(r"没有[^。！？\n]{1,20}[，,]\s*只有"), "no-only", "「没有X，只有Y」句式"),
     (re.compile(r"这一刻[，,]"), "this-moment", "「这一刻，」起手式"),
     # v2.1 实战漏网句式（blocking）
-    (re.compile(r"(?:没有|无)[^。！？\n]{1,14}[，,](?:也)?(?:没有|无)[^。！？\n]{1,14}"),
+    # 「没有灯，也没有人」是带「也」的普通并列陈述，不算排比；只抓无连接词的同构连排。
+    (re.compile(_NEG + r"[^，,。！？\n]{1,14}[，,]\s*" + _NEG + r"[^。！？\n]{1,14}"),
      "negation-parade", "否定排比（没有X，没有Y连排）"),
-    (re.compile(r"是[^。！？\n]{1,20}[，,]\s*(?:而)?不是[^。！？\n]{1,20}"),
+    # 「是」须为判断词：排除「可是/只是/总是/还是/于是…」等虚词，以及
+    # 「…，不是吗」反问和「不是…就是…」选择句。
+    (re.compile(r"(?<![可只总还但于若要或倒老凡硬先像不])是[^。！？\n]{1,20}[，,]\s*(?:而)?"
+                r"不是(?![吗么嘛])(?![^。！？\n]{0,12}就是)[^。！？\n]{1,20}"),
      "reverse-not-is", "反序对比（是A，不是B）"),
     (re.compile(r"声音(?:不大|不高|很轻|轻柔|平静|平淡|低)[^。！？\n]{0,20}却"),
      "voice-contrast", "音量反差腔（声音不大…却…）"),
@@ -172,7 +183,10 @@ META_LEAK_PATTERNS = [
     (re.compile(r"上一章|上章|前一章|本章|这一章|下一章"), "meta-leak", "工程词「上/下一章」入正文"),
     (re.compile(r"前文|后文|伏笔|细纲|章纲|大纲"), "meta-leak", "工程词（前文/伏笔/细纲…）入正文"),
     # v3.0 新增元信息词
-    (re.compile(r"情节点|本章目标|钩子|铺垫"), "meta-leak", "工程词（情节点/本章目标/钩子…）入正文"),
+    # 「钩子」「铺垫」在故事内可以是实物/动作（鱼钩子、铺垫子），只在写作术语语境下判泄漏。
+    (re.compile(r"情节点|本章目标|(?:章末|章尾|结尾|悬念|下章|留(?:个|了个|下)?|埋(?:个|了个|下)?)钩子"
+                r"|钩子(?:问题|设计|句)|(?:做|作|做好|作为|充分|大量|前期|剧情|情节)铺垫|铺垫(?:剧情|情节|不足|过长)"),
+     "meta-leak", "工程词（情节点/本章目标/钩子…）入正文"),
     (re.compile(r"读者(?:们)?(?:会|可能|应该|一定)?(?:觉得|看到|读到|发现)"), "meta-leak",
      "叙述者点名「读者」出戏"),
     (re.compile(r"作者(?:们)?(?:想|要|希望|将|会)?(?:表达|呈现|告诉|描写|刻画)"), "meta-leak",
@@ -263,7 +277,7 @@ SUBJ_VERB_RE = re.compile(
 ACTION_LIST_SENT_MIN = 3
 
 # v3.0 引号强调滥用（同一自然段内引号内容 ≥4 个且非对话）
-QUOTE_EMPHASIS_PARA_RE = re.compile(r"[「\"][^」\"\n]{1,8}[」\"]")
+QUOTE_EMPHASIS_PARA_RE = re.compile(r"[「\"\u201c][^」\"\u201d\n]{1,8}[」\"\u201d]")
 QUOTE_EMPHASIS_PARA_MIN = 4
 
 # 解释链密度（advisory）：叙述者判断链聚集
@@ -274,10 +288,39 @@ REASONING_PER_KILO = 4.0
 REASONING_MIN_HITS = 4
 
 # 引号强调（advisory）：叙述里 1-4 字短词加引号强调（对话行豁免）
-QUOTE_EMPHASIS_RE = re.compile(r"[「\"][^」\"\n]{1,4}[」\"]")
+QUOTE_EMPHASIS_RE = re.compile(r"[「\"\u201c][^」\"\u201d\n]{1,4}[」\"\u201d]")
 QUOTE_EMPHASIS_MIN_HITS = 3
 QUOTE_EMPHASIS_PER_KILO = 3.0
 DIALOGUE_TAG_RE = re.compile(r"[说问喊道答叫骂吼哭笑嘟囔嘀咕吩咐解释回应接道]{1,2}[：:]?$")
+
+# 全文对话标签提取：引号前「他沉声道：」与引号后「」她淡淡地说。两种位置。
+# 普通「说/问/道」是标记说话人的工具，可重复使用；只有带固定语气修饰的公式化标签
+# （沉声道/淡淡地说…）成片出现才算 AI 腔信号。
+_TAG_CHUNK = r"([^。！？…\n\u201c\u201d「」\"，,：:]{1,10})"
+TAG_BEFORE_QUOTE_RE = re.compile(
+    r"(?:^|[。！？…\n\u201d」\"])[ \t]*" + _TAG_CHUNK + r"[：:，,][ \t]*[\u201c「\"]")
+TAG_AFTER_QUOTE_RE = re.compile(r"[\u201d」\"][ \t]*" + _TAG_CHUNK + r"(?=[。，,\n]|$)")
+TAG_VERB_END_RE = re.compile(r"(?:说道|问道|答道|喊道|笑道|叫道|吼道|骂道|开口|说|问|道|喊|答)$")
+FORMULA_TAG_RE = re.compile(
+    r"(?:沉声|冷声|淡淡|冷冷|缓缓|轻声|低声|柔声|厉声|幽幽|平静|淡然)(?:地)?"
+    r"(?:说道|问道|开口|说|问|道)$")
+FORMULA_TAG_MIN_HITS = 4
+FORMULA_TAG_PER_KILO = 2.0
+
+# 无「而」的否定对比（advisory，密度型）：「不是A，是B」单用是自然口语，成片才是腔调
+BARE_CONTRAST_PATTERN = re.compile(
+    r"(?<![是要莫可岂])不是[^，,。！？\n]{1,16}[，,]\s*(?:而)?是[^。！？\n]{1,16}")
+BARE_CONTRAST_MIN_HITS = 3
+BARE_CONTRAST_PER_KILO = 1.5
+
+# 身体反应套词（advisory，密度型）：把「心理告知」机械外化后最常见的替代品
+BODY_CLICHE_PATTERN = re.compile(
+    r"指节(?:发白|泛白)|喉结(?:上下)?(?:滚动|滚了滚|动了动)"
+    r"|瞳孔(?:骤然|猛地|微微)?(?:骤缩|一缩|微缩|猛缩|收缩)"
+    r"|深吸(?:了)?一口气|倒吸(?:了)?一口(?:凉|冷)气|[攥握](?:紧)?(?:了)?拳头|呼吸一滞"
+    r"|心跳漏了一拍|心脏漏跳|眸[色光](?:一沉|微沉|一暗)|眼神一凛|[脊后]背发凉|头皮发麻")
+BODY_CLICHE_MIN_HITS = 4
+BODY_CLICHE_PER_KILO = 2.5
 
 # 碎句号（advisory）：连续 ≥N 个叙述短句（每句可见字数 ≤M）无呼吸
 STUTTER_MIN_RUN = 6
@@ -291,7 +334,7 @@ REPEAT_MIN_LEN = 8
 REPEAT_MIN_COUNT = 3
 
 # 引号识别（对话域 vs 叙述域）
-QUOTE_RE = re.compile(r'"[^"\n]*"|「[^」\n]*」')
+QUOTE_RE = re.compile(r'"[^"\n]*"|「[^」\n]*」|\u201c[^\u201d\n]*\u201d')
 
 # Gate F 结尾升华：总结性语句片段
 SUBLIMATION_PHRASES = [
@@ -383,14 +426,24 @@ def load_whitelist(path):
 
 def is_whitelisted(word, line, whitelist):
     """判断一处禁用词命中是否被白名单豁免（规则见 anti-ai-style.md）。"""
-    if not whitelist:
-        return False
-    if word in whitelist:
+    if whitelist and word in whitelist:
         return True
-    for wl in whitelist:
+    for wl in BUILTIN_PHRASE_WHITELIST.union(whitelist or ()):
         if len(wl) > len(word) and word in wl and wl in line:
             return True
     return False
+
+
+def dialogue_tags(text):
+    """返回全文对话标签片段列表（如「他沉声道」「她说」），含引号前后两种位置。"""
+    chunks = [m.group(1) for m in TAG_BEFORE_QUOTE_RE.finditer(text)]
+    chunks += [m.group(1) for m in TAG_AFTER_QUOTE_RE.finditer(text)]
+    return [c.strip() for c in chunks if TAG_VERB_END_RE.search(c.strip())]
+
+
+def formula_dialogue_tags(text):
+    """对话标签中带固定语气修饰的公式化标签。"""
+    return [t for t in dialogue_tags(text) if FORMULA_TAG_RE.search(t)]
 
 
 def strip_dialogue(line):
@@ -703,6 +756,20 @@ def scan_density(text, non_ws):
         hits.append(("reasoning-chain-tic", "解释链密度过高（知道/明白/这意味着 聚集）",
                      f"命中 {chain} 处 / {kilo:.1f} 千字（阈值 ≥{REASONING_MIN_HITS} 且 ≥{REASONING_PER_KILO}/千字）"))
 
+    # 无「而」的否定对比
+    bare = len(BARE_CONTRAST_PATTERN.findall(narration))
+    if bare >= BARE_CONTRAST_MIN_HITS and bare / kilo >= BARE_CONTRAST_PER_KILO:
+        hits.append(("bare-contrast-tic", "否定对比成片（不是A，是B 反复出现）",
+                     f"命中 {bare} 处 / {kilo:.1f} 千字（阈值 ≥{BARE_CONTRAST_MIN_HITS} 且 "
+                     f"≥{BARE_CONTRAST_PER_KILO}/千字）；只保留真正区分事实或纠正误判的"))
+
+    # 身体反应套词
+    body = BODY_CLICHE_PATTERN.findall(narration)
+    if len(body) >= BODY_CLICHE_MIN_HITS and len(body) / kilo >= BODY_CLICHE_PER_KILO:
+        hits.append(("body-cliche-tic", "身体反应套词密度过高（指节发白/瞳孔一缩/深吸一口气…）",
+                     f"命中 {len(body)} 处 / {kilo:.1f} 千字（阈值 ≥{BODY_CLICHE_MIN_HITS} 且 "
+                     f"≥{BODY_CLICHE_PER_KILO}/千字）；删无功能的或直写，不换另一个身体动作"))
+
     # 引号强调（对话行豁免）
     qe = 0
     for line in text.splitlines():
@@ -1010,7 +1077,7 @@ def deslop_score(text, words, whitelist):
       1. 禁用词密度：禁用词命中数 / 千字
       2. 连续排比段数：连续出现否定排比/反序对比的段数
       3. 心理词占比：心理告知句式命中数 / 总句数
-      4. 对话标签密度：对话标签（说/问/道）数 / 千字
+      4. 对话标签密度：公式化对话标签（沉声道/淡淡地说…）数 / 千字；普通「说」不计
       5. 平均段落句数：单段句数偏离理想区间（3-6句）
       6. 重复描写密度：复读句与微动作复读命中数 / 千字
 
@@ -1058,10 +1125,7 @@ def deslop_score(text, words, whitelist):
     score_psych = min(100.0, psych_ratio * 500.0)
 
     # 4. 对话标签密度
-    tag_count = 0
-    for line in lines:
-        if DIALOGUE_TAG_RE.search(line.strip()[-4:]):
-            tag_count += 1
+    tag_count = len(formula_dialogue_tags(text))
     tag_density = tag_count / kilo
     score_tag = min(100.0, tag_density * 20.0)
 
@@ -1427,7 +1491,7 @@ def print_gate_report(text, lines, words, whitelist, non_ws, style_exemptions=No
     kilo = non_ws / 1000.0
     weighted = (len(banned_blocking) * 2 + len(toxic_blocking) * 3
                 + len(blocking_hits) * 3 + len(trailer_hits) * 3
-                + len(gate_c_hits) * 1 + n_advisory * 1)
+                + n_advisory * 1)
     per_kilo = weighted / kilo if kilo > 0 else 0.0
     ai_score = min(100.0, per_kilo)
     low_threshold = AI_SCORE_THRESHOLDS.get("low", 20)
@@ -1597,9 +1661,15 @@ def scan_ai_patterns(text, lines=None, words=None, whitelist=None, style_exempti
 
     # 3. 解释腔（blocking）
     gate_g = scan_blocking_patterns(lines, style_exemptions)
-    if gate_g:
-        hits.append(("ai-explainer-tone", f"解释腔命中 {len(gate_g)} 处",
+    explainer_hits = [h for h in gate_g if h[1] == "explainer-tone"]
+    if explainer_hits:
+        hits.append(("ai-explainer-tone", f"解释腔命中 {len(explainer_hits)} 处",
                      "上帝视角剧透/解释因果/叙述者定性",
+                     "blocking"))
+    meta_hits = [h for h in gate_g if h[1] == "meta-leak"]
+    if meta_hits:
+        hits.append(("ai-meta-leak", f"工程词泄漏 {len(meta_hits)} 处",
+                     f"命中: {', '.join(sorted(set(h[3] for h in meta_hits))[:5])}",
                      "blocking"))
 
     # 4. 拒绝语（blocking）
@@ -1628,6 +1698,8 @@ def scan_ai_patterns(text, lines=None, words=None, whitelist=None, style_exempti
         "metaphor-density-tic": ("ai-metaphor-density", "比喻密度过高"),
         "reasoning-chain-tic": ("ai-reasoning-chain", "解释链密度过高"),
         "quote-emphasis-tic": ("ai-quote-emphasis", "引号强调滥用"),
+        "bare-contrast-tic": ("ai-bare-contrast", "否定对比成片"),
+        "body-cliche-tic": ("ai-body-cliche", "身体反应套词密度过高"),
     }
     for d in density:
         rule_id = d[0]
@@ -1735,14 +1807,14 @@ def scan_ai_patterns(text, lines=None, words=None, whitelist=None, style_exempti
                      "advisory"))
 
     # 15. 对话标签单一（advisory）
-    tag_matches = DIALOGUE_TAG_RE.findall(text)
-    if tag_matches:
-        unique_tags = set(t.strip() for t in tag_matches if t.strip())
-        if len(tag_matches) >= 8 and len(unique_tags) <= 2:
-            hits.append(("ai-tag-monotony",
-                         f"对话标签单一（{len(tag_matches)}处仅用{len(unique_tags)}种）",
-                         f"重复标签: {', '.join(sorted(unique_tags))}",
-                         "advisory"))
+    # 普通「说」重复不算问题；只看带固定语气修饰的公式化标签是否成片。
+    formula_tags = formula_dialogue_tags(text)
+    if len(formula_tags) >= FORMULA_TAG_MIN_HITS and \
+       len(formula_tags) / kilo >= FORMULA_TAG_PER_KILO:
+        hits.append(("ai-tag-monotony",
+                     f"对话标签公式化（{len(formula_tags)} 处带固定语气修饰）",
+                     f"标签: {', '.join(sorted(set(formula_tags))[:5])}",
+                     "advisory"))
 
     # 16. 段落节奏均一（advisory）
     para_lens = [len(re.sub(r"\s", "", p)) for p in paras if p.strip()]

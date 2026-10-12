@@ -242,5 +242,73 @@ class TestR5ClosingQuote(unittest.TestCase):
         self.assertTrue(any(hit[0] == "truncation" for hit in scan_structure("他抬手，正要")))
 
 
+class TestBlockingPrecision(unittest.TestCase):
+    """blocking 规则不得误伤正常句子，也不得漏掉真正的同构句式。"""
+
+    def blocking_ids(self, line):
+        banned, toxic = scan_lines([line], BANNED_WORDS)
+        return sorted([h[1] for h in banned if h[3] == "blocking"]
+                      + [h[1] for h in toxic if h[5] == "blocking"])
+
+    def test_function_word_shi_is_not_reverse_contrast(self):
+        for line in ("可是天已经黑了，不是他不想走。", "他只是点了点头，不是很在意。",
+                     "老张还是老样子，不是在喝茶就是在看报。", "他总是这样，不是吗。"):
+            with self.subTest(line=line):
+                self.assertEqual(self.blocking_ids(line), [])
+        self.assertEqual(self.blocking_ids("这是命令，不是请求。"), ["reverse-not-is"])
+
+    def test_negation_parade_needs_bare_parallel_negations(self):
+        for line in ("他无奈地摇头，无数念头闪过。", "屋里没有灯，也没有人。"):
+            with self.subTest(line=line):
+                self.assertEqual(self.blocking_ids(line), [])
+        self.assertEqual(self.blocking_ids("没有犹豫，没有迟疑。"), ["negation-parade"])
+
+    def test_banned_word_inside_idiom_is_exempt(self):
+        self.assertEqual(self.blocking_ids("她做事一丝不苟。"), [])
+        self.assertEqual(self.blocking_ids("他眼里闪过一丝不安。"), ["一丝"])
+
+    def test_curly_quotes_are_dialogue_domain(self):
+        banned, _ = scan_lines(["“你似乎不太高兴。”她说。"], BANNED_WORDS)
+        self.assertEqual([(h[1], h[3]) for h in banned], [("似乎", "advisory")])
+        self.assertEqual(strip_dialogue("“走。”他说。"), "「」他说。")
+
+    def test_story_objects_are_not_meta_leaks(self):
+        def meta(line):
+            return [h[3] for h in scan_blocking_patterns(["标题", line]) if h[1] == "meta-leak"]
+        self.assertEqual(meta("他把鱼钩子甩进河里，又铺垫子坐下。"), [])
+        self.assertEqual(meta("这里要留个钩子，做好铺垫。"), ["留个钩子"])
+
+
+class TestSecondGenerationAdvisories(unittest.TestCase):
+    """密度型 advisory：成片才报，单次自然用法不报。"""
+
+    FILLER = "雨落在瓦上。" * 20
+
+    def density_ids(self, text):
+        return [h[0] for h in check_text.scan_density(text, len(text))]
+
+    def test_bare_contrast_only_flagged_when_clustered(self):
+        clustered = "这不是威胁，是通知。他不是怕，是没力气怕了。那不是光，是火。" + self.FILLER
+        self.assertIn("bare-contrast-tic", self.density_ids(clustered))
+        self.assertNotIn("bare-contrast-tic", self.density_ids("这不是威胁，是通知。" + self.FILLER * 2))
+
+    def test_body_cliche_density(self):
+        text = "他指节发白，喉结滚动。她瞳孔骤缩，深吸一口气。他攥紧了拳头，呼吸一滞。" + self.FILLER
+        self.assertIn("body-cliche-tic", self.density_ids(text))
+        self.assertNotIn("body-cliche-tic", self.density_ids("他深吸一口气。" + self.FILLER))
+
+    def test_formula_tags_flagged_but_plain_said_is_not(self):
+        formula = "\n".join(["“走吧。”他沉声道。", "她淡淡地说：“好。”",
+                             "「去。」他冷冷地说道。"] * 3)
+        self.assertIn("ai-tag-monotony", [h[0] for h in check_text.scan_ai_patterns(formula)])
+        plain = "\n".join(["“走吧。”他说。", "“好。”她说。"] * 10)
+        self.assertNotIn("ai-tag-monotony", [h[0] for h in check_text.scan_ai_patterns(plain)])
+
+    def test_meta_leak_is_not_labelled_explainer_tone(self):
+        ids = [h[0] for h in check_text.scan_ai_patterns("标题\n这是本章的伏笔。")]
+        self.assertIn("ai-meta-leak", ids)
+        self.assertNotIn("ai-explainer-tone", ids)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

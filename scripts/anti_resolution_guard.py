@@ -42,7 +42,7 @@ import sys
 # =========================================================
 
 # 引号识别（对话域 vs 叙述域）——与 check_text.py 保持一致
-QUOTE_RE = re.compile(r'"[^"\n]*"|「[^」\n]*」')
+QUOTE_RE = re.compile(r'"[^"\n]*"|「[^」\n]*」|\u201c[^\u201d\n]*\u201d')
 
 # 章节号提取
 CHAPTER_NUM_RE = re.compile(r"第\s*(\d+)\s*章")
