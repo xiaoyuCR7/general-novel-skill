@@ -1,0 +1,14 @@
+{
+  "name": "general-novel-skill",
+  "description": "中文网文创作 skill：general-novel-skill",
+  "owner": {
+    "name": "熊小雨"
+  },
+  "plugins": [
+    {
+      "name": "general-novel-skill",
+      "source": "./",
+      "description": "中文网文长篇/短篇创作：大纲、连载追踪、节奏控制、去 AI 味与中断恢复"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 name: planning-editor
 description: 策划主编。核对章纲与必要状态，产出完整 Chapter Brief；输入或预算不足时阻断，不写正文。
-recommended_model: claude-opus-4-20250514
+recommended_model: claude-opus-5-5
 model_tier: T0
 ---
 

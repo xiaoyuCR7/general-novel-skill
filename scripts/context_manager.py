@@ -1145,8 +1145,14 @@ def extract_mentioned_characters(chapter_content: str, book_dir: Path) -> List[s
         match = re.match(r"^\s*(?:[-*]\s*)?(?:\*\*)?(?:" + labels + r")"
                          r"(?:\*\*)?\s*[：:]\s*(.+)$", line)
         if match:
-            names = re.split(r"[，,、;；]", match.group(1))
-            names = [name.strip(" \t\r\n*`。.!！?？") for name in names]
+            # 括注是说明而不是人名的一部分；括注声明此人不在场（电话、回忆、提及等）
+            # 或只是一次性龙套时，不强制要求人物卡或状态条目。
+            names = []
+            for name, note in re.findall(r"([^，,、;；（(]+)(?:[（(]([^）)]*)[）)])?", match.group(1)):
+                if note and re.search(r"电话|语音|微信|短信|回忆|提及|照片|未出场|不出场|只闻其声|画外"
+                                      r"|龙套|路人|无名|群演|一次性", note):
+                    continue
+                names.append(name.strip(" \t\r\n*`。.!！?？"))
             no_cast = {"无", "无人", "无出场人物", "不新增出场人物", "不新增人物",
                        "无新增人物", "无新增出场人物", "无其他人物", "无其他出场人物"}
             mentioned.extend(name for name in names if name and name not in no_cast)

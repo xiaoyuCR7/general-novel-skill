@@ -132,18 +132,18 @@ ending_mode 为 serial/closed/finale。closed/finale 的 hook_question 为空，
 
 | 分层 | 代号 | 代表模型 | 定位 |
 |---|---|---|---|
-| 旗舰层 | T0 | Claude Opus 4 / GPT-4o | 最强推理，用于复杂规划与预算计算 |
-| 主力层 | T1 | Claude Sonnet 4 / GPT-4o-mini | 创意生成+模式匹配，质量与成本平衡 |
-| 效率层 | T2 | Claude Haiku / GPT-4o-mini | 规则检查+事实核查，高吞吐低成本 |
+| 旗舰层 | T0 | Claude Opus 5.5 / GPT-4o | 最强推理，用于复杂规划与预算计算 |
+| 主力层 | T1 | Claude Sonnet 5.5 / GPT-4o-mini | 创意生成+模式匹配，质量与成本平衡 |
+| 效率层 | T2 | Claude Haiku 5.5 / GPT-4o-mini | 规则检查+事实核查，高吞吐低成本 |
 
 ### 各 Agent 分层配置
 
 | Agent | 推荐模型 | 分层 | 分层理由 |
 |---|---|---|---|
-| planning-editor | claude-opus-4-20250514 | T0 | 章纲规划、情节点预算计算、节奏配额核查需要复杂多步推理和数值计算 |
-| novelist | claude-sonnet-4-20250514 | T1 | 创意生成和文风控制，不需要旗舰级推理，T1 在创意质量和成本间最佳平衡 |
-| anti-ai-editor | claude-sonnet-4-20250514 | T1 | 模式识别和文本改写，对语言理解有较高要求但不需要旗舰级推理 |
-| consistency-reviewer | claude-haiku-4-20250514 | T2 | 规则检查和事实核查为主，不涉及创意生成，T2 即可胜任 |
+| planning-editor | claude-opus-5-5 | T0 | 章纲规划、情节点预算计算、节奏配额核查需要复杂多步推理和数值计算 |
+| novelist | claude-sonnet-5-5 | T1 | 创意生成和文风控制，不需要旗舰级推理，T1 在创意质量和成本间最佳平衡 |
+| anti-ai-editor | claude-sonnet-5-5 | T1 | 模式识别和文本改写，对语言理解有较高要求但不需要旗舰级推理 |
+| consistency-reviewer | claude-haiku-5-5 | T2 | 规则检查和事实核查为主，不涉及创意生成，T2 即可胜任 |
 
 ### 降级协议
 

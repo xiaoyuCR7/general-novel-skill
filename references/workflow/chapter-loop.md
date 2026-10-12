@@ -153,6 +153,10 @@ python scripts/rhythm_guard.py --quota "{book}/追踪/节奏配额.md" --declare
 python scripts/chapter_transaction.py prepare "{book}" --chapter {N}
 ```
 
+章纲「状态」仍为「提案，未锁定」时 prepare 以 `outline_unlocked` 拒绝：作者确认后把状态改为「已锁定」
+再运行。作者明确授权“按提案直接写”时才加 `--allow-unlocked-outline`，并在报告中记录授权原话；
+不得为了继续流程自行加这个参数或自行改状态。
+
 `{stage}` **只指输出的 stage_root**，`{chapter_file}` 指输出文件名（旧章沿用原名，不另造同章文件）。
 stage 保留原书布局，人工只允许修改本章正文和追踪五表；gate/index 由脚本生成。
 章意图、Brief、Beat、片段、指纹和语义报告放在 stage 与正式工程之外的本次工作目录。
@@ -210,6 +214,9 @@ python scripts/style_fingerprint.py compare "{临时目录}/fingerprint.md" "{st
 blocking 项则输出 `gate_blocked`，保留 checkpoint 与 pending draft，canonical state 不变。
 同一章同一任务的两轮额度由主 Agent 在工作报告中记录，机器/语义 P0 共享；切换团队、Beat、
 模型、会话或重建事务不能重置。两轮后不得再自动改、不提交，也不能降级成 advisory。
+一轮指一次针对 blocking/P0 的改稿加重新验证。P1/P2、advisory 和留字数余量这类非阻断改动不单独
+计轮：能并入当轮就并入；blocking 清零后只允许再集中处理一次，改完重新 validate，不反复打磨。
+字数按正文计，不含章节标题行；目标区间留出约 2% 余量，不贴着上限交稿。
 - `normalize_punct.py --check`：只看不改；有功能的破折号、省略号、语气标点保持原样。
   不跑默认批量归一化，不为去符号强添动作。确需修正时只改 stage 正文，再重跑门禁。
 - `check_text.py --gate-report`：查七类（字数、Gate A 禁用词含白名单、Gate B 毒句式、
@@ -277,6 +284,25 @@ revision 的范围与冻结规则处理，核对完成前不开新章；旧章�
 - `伏笔台账.md`：新埋登记（🟡）、回收销账（✅）、检查是否出现超期（🔴）。
 - `时间线.md`：本章发生明确时间推移时追加。
 - `节奏配额.md`：追加本章的 A/B/C 触发记录、事件类型、档位记录。
+
+### 写后事实增量：每条变更带正文出处
+
+事务保证正文与五表一起落盘，不保证表里的事实正文里真的发生过。五表改完后，在工程外工作目录
+按 `assets/templates/tracking-delta.json` 写一份本章增量：`summary` 即章节摘要七字段，
+`claims` 逐条列出对角色状态、伏笔台账、时间线、节奏配额的变更，每条附一段能在本章正文
+逐字找到的连续摘录作为 `evidence`。本章确无追踪变更时 `claims` 为空数组。
+
+```bash
+python scripts/tracking_delta.py check "{work}/tracking-delta.json" --chapter-file "{stage}/正文/{chapter_file}" --ledger "{stage}/追踪/伏笔台账.md"
+python scripts/tracking_delta.py apply-summary "{work}/tracking-delta.json" --summary-file "{stage}/追踪/章节摘要.md"
+```
+
+- `check` 报错说明追踪条目没有正文出处：先改追踪条目使其与正文一致；若正文确实漏写了已授权
+  事件，按正文 P0 走既有修复额度，不为凑证据改写已发生事实，也不新增未授权内容。
+- `apply-summary` 用同一份增量生成本章摘要条目，同章已有条目则替换，避免重复追加；
+  其余四表仍按上文规则在 stage 中修改，并与 `claims` 保持一致。
+- 核对只证明“有出处”，不证明摘录足以支持结论；语义是否成立仍由主 Agent 自查。
+- 脚本不可用时逐条人工回查原文并声明 `tool_unavailable`，不声称已机器核对。
 
 ### 共同校验与提交
 

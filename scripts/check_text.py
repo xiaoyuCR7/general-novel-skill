@@ -313,6 +313,22 @@ BARE_CONTRAST_PATTERN = re.compile(
 BARE_CONTRAST_MIN_HITS = 3
 BARE_CONTRAST_PER_KILO = 1.5
 
+# 叙述者点评（advisory，密度型）：戏已经演完，叙述者再跳出来替读者总结、归纳或点题
+NARRATOR_GLOSS_PATTERNS = [
+    re.compile(r"(?:^|[。！？\n])\s*(?:就是这个了|说白了|说到底|归根结底|这就是|这便是|原来如此)"),
+    re.compile(r"[他她](?:[^。！？\n]{0,8})才(?:明白|转过弯来?|反应过来|想明白|回过味来?|意识到)"),
+    re.compile(r"从来(?:不|都|没|只)[^。！？\n]{1,14}[。！？]"),
+    re.compile(r"(?:只管|只认|只看)[^，,。！？\n]{1,12}[，,][^。！？\n]{0,6}不(?:管|认|看|问)"),
+    re.compile(r"(?:等于|也就是|换句话说|说明)(?:说)?[^。！？\n]{2,20}[。！？]"),
+]
+NARRATOR_GLOSS_MIN_HITS = 4
+NARRATOR_GLOSS_PER_KILO = 1.5
+
+# 一行一段（advisory）：叙述被切成大量极短段落，含单独成行的读数、感叹和点题句
+ONE_LINE_PARA_MAX_CHARS = 12
+ONE_LINE_PARA_MIN_HITS = 8
+ONE_LINE_PARA_RATIO = 0.30
+
 # 身体反应套词（advisory，密度型）：把「心理告知」机械外化后最常见的替代品
 BODY_CLICHE_PATTERN = re.compile(
     r"指节(?:发白|泛白)|喉结(?:上下)?(?:滚动|滚了滚|动了动)"
@@ -762,6 +778,27 @@ def scan_density(text, non_ws):
         hits.append(("bare-contrast-tic", "否定对比成片（不是A，是B 反复出现）",
                      f"命中 {bare} 处 / {kilo:.1f} 千字（阈值 ≥{BARE_CONTRAST_MIN_HITS} 且 "
                      f"≥{BARE_CONTRAST_PER_KILO}/千字）；只保留真正区分事实或纠正误判的"))
+
+    # 叙述者点评
+    gloss = sum(len(pat.findall(narration)) for pat in NARRATOR_GLOSS_PATTERNS)
+    if gloss >= NARRATOR_GLOSS_MIN_HITS and gloss / kilo >= NARRATOR_GLOSS_PER_KILO:
+        hits.append(("narrator-gloss-tic", "叙述者点评密度过高（演完再替读者总结/归纳/点题）",
+                     f"命中 {gloss} 处 / {kilo:.1f} 千字（阈值 ≥{NARRATOR_GLOSS_MIN_HITS} 且 "
+                     f"≥{NARRATOR_GLOSS_PER_KILO}/千字）；动作或后果已交付的意思不再复述，人物当场的推断保留"))
+
+    # 一行一段
+    narr_lines = narration.split("\n")
+    if narr_lines and is_title_line(1, narr_lines[0]):
+        narr_lines = narr_lines[1:]
+    narr_paras = [re.sub(r"\s", "", p) for p in narr_lines]
+    narr_paras = [p for p in narr_paras if p and "「」" not in p]
+    short_paras = [p for p in narr_paras if len(p) <= ONE_LINE_PARA_MAX_CHARS]
+    if (len(short_paras) >= ONE_LINE_PARA_MIN_HITS
+            and len(short_paras) / len(narr_paras) >= ONE_LINE_PARA_RATIO):
+        hits.append(("one-line-paragraph-tic", "一行一段过多（叙述被切成大量极短段落）",
+                     f"叙述段 {len(narr_paras)} 段中 {len(short_paras)} 段不超过 {ONE_LINE_PARA_MAX_CHARS} 字"
+                     f"（阈值 ≥{ONE_LINE_PARA_MIN_HITS} 段且占比 ≥{int(ONE_LINE_PARA_RATIO * 100)}%）；"
+                     "读数、感叹和点题句并回相邻段落，只在真正的峰值单独成行"))
 
     # 身体反应套词
     body = BODY_CLICHE_PATTERN.findall(narration)
@@ -1498,7 +1535,8 @@ def print_gate_report(text, lines, words, whitelist, non_ws, style_exemptions=No
     med_threshold = AI_SCORE_THRESHOLDS.get("medium", 40)
     level = "轻度" if ai_score < low_threshold else ("中度" if ai_score < med_threshold else "重度")
     print(f"\n{sep} 量化打分 {sep}")
-    print(f"  blocking 命中 {n_blocking} 处 / advisory 命中 {n_advisory} 处")
+    print(f"  blocking 命中 {n_blocking} 处 / advisory 命中 {n_advisory + len(multi_degradation)} 处"
+          f"（其中退化检测 {len(multi_degradation)} 处）")
     print(f"  加权 {weighted} / {kilo:.1f} 千字 → AI 味分数 {ai_score:.1f}/100（{level}）")
     print(f"  （0-{low_threshold} 轻度，{low_threshold}-{med_threshold} 中度，>{med_threshold} 重度）")
     print(f"{sep}{sep}{sep}\n")
@@ -1700,6 +1738,8 @@ def scan_ai_patterns(text, lines=None, words=None, whitelist=None, style_exempti
         "quote-emphasis-tic": ("ai-quote-emphasis", "引号强调滥用"),
         "bare-contrast-tic": ("ai-bare-contrast", "否定对比成片"),
         "body-cliche-tic": ("ai-body-cliche", "身体反应套词密度过高"),
+        "narrator-gloss-tic": ("ai-narrator-gloss", "叙述者点评密度过高"),
+        "one-line-paragraph-tic": ("ai-one-line-paragraph", "一行一段过多"),
     }
     for d in density:
         rule_id = d[0]
@@ -2248,8 +2288,10 @@ def main():
             dedup_words.append(w)
     words = dedup_words
 
-    non_ws, cjk = count_chars(text)
-    print(f"字数：{non_ws}（非空白字符）/ {cjk}（汉字）")
+    # 字数按正文计：首行是章节标题时不计入，与平台和章纲的口径一致。
+    body_text = "\n".join(lines[1:]) if lines and is_title_line(1, lines[0]) else text
+    non_ws, cjk = count_chars(body_text)
+    print(f"字数：{non_ws}（正文非空白字符，不含标题行）/ {cjk}（汉字）")
     if args.style_stats:
         print_style_stats(text)
 

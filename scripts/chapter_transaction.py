@@ -273,10 +273,33 @@ def _finalize_terminal(book, journal):
     _prune_archives(book)
 
 
-def prepare(book, chapter, chapter_file=None):
+UNLOCKED_OUTLINE_RE = re.compile(r"提案[，,]\s*未锁定|状态[：:].*未锁定")
+
+
+def unlocked_outline(book, chapter):
+    """返回本章仍标着「未锁定」的章纲相对路径；没有则返回 None。
+
+    开书与补纲交付的章纲在「状态」行标「提案，未锁定」；作者确认后改为「已锁定」即为锁纲。
+    """
+    outline_dir = Path(book) / "大纲"
+    if not outline_dir.is_dir():
+        return None
+    pattern = re.compile(r"第\s*0*{}\s*章".format(chapter))
+    for path in sorted(outline_dir.glob("*.md")):
+        if pattern.search(path.name) and UNLOCKED_OUTLINE_RE.search(path.read_text(encoding="utf-8-sig")):
+            return "大纲/" + path.name
+    return None
+
+
+def prepare(book, chapter, chapter_file=None, allow_unlocked_outline=False):
     book = Path(book).resolve()
     if not book.is_dir():
         raise TransactionError("missing_book")
+    unlocked = unlocked_outline(book, chapter)
+    if unlocked and not allow_unlocked_outline:
+        raise TransactionError(
+            "outline_unlocked: {} 仍标「未锁定」；作者确认后把状态改为「已锁定」再 prepare，"
+            "或在作者明确授权按提案开写时加 --allow-unlocked-outline".format(unlocked))
     with transaction_lock(book):
         if pending_transaction(book):
             raise TransactionError("transaction_incomplete: " + recovery_command(book))
@@ -471,6 +494,8 @@ def main(argv=None):
     prep.add_argument("book")
     prep.add_argument("--chapter", type=int, required=True)
     prep.add_argument("--chapter-file")
+    prep.add_argument("--allow-unlocked-outline", action="store_true",
+                      help="作者明确授权按未锁定的提案章纲开写时使用；须在报告中记录授权依据")
     val = sub.add_parser("validate")
     val.add_argument("book")
     val.add_argument("--min-chars", type=int, required=True)
@@ -486,7 +511,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == "prepare":
-            result = prepare(args.book, args.chapter, args.chapter_file)
+            result = prepare(args.book, args.chapter, args.chapter_file, args.allow_unlocked_outline)
         elif args.command == "validate":
             result = validate(args.book, args.min_chars, args.max_chars, args.declare)
         elif args.command == "commit":

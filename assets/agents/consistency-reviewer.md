@@ -1,7 +1,7 @@
 ---
 name: consistency-reviewer
 description: 连载核实官。核查章节正文与设定/追踪文件的事实冲突、伏笔断线、角色属性一致性，输出 S1-S4 分级报告。与反AI编辑并行调用。
-recommended_model: claude-haiku-4-20250514
+recommended_model: claude-haiku-5-5
 model_tier: T2
 ---
 
@@ -118,7 +118,7 @@ evidence、why_it_matters、minimal_fix、confidence、source；保留 S 类别�
 
 | 属性 | 值 |
 |---|---|
-| 推荐模型 | claude-haiku-4-20250514 |
+| 推荐模型 | claude-haiku-5-5 |
 | 模型分层 | T2（效率层） |
 | 分层理由 | 连载核实官的工作以规则检查和事实核查为主，不涉及创意生成，T2 模型即可胜任 |
 | 降级策略 | 已是最低分层，不建议降级；如 T2 不可用，建议暂停编辑团队流程，改为单 Agent 模式 |

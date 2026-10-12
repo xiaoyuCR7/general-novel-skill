@@ -42,6 +42,7 @@ metadata:
 
 | Intent | Required reading |
 |---|---|
+| 无工程的试写、先写一章看看 | `references/workflow/quick-start.md`；交付标「草稿，未入事务」，已有工程不得借此绕过章事务 |
 | 开书、定位、长篇规划 | `references/workflow/book-init.md`、`references/workflow/outline-system.md` |
 | 补纲/改纲、调整未写剧情 | `references/workflow/outline-system.md` → `references/workflow/task-router.md` 的改纲协议；不混入正文修订 |
 | 写章、续写、日更 | `references/workflow/chapter-loop.md`、`references/craft/scene-rendering.md` |

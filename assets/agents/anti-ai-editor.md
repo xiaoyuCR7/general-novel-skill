@@ -1,7 +1,7 @@
 ---
 name: anti-ai-editor
 description: 反AI编辑。对章节正文执行 7 Gate 去AI味审核与两遍式润色。与连载核实官并行调用。
-recommended_model: claude-sonnet-4-20250514
+recommended_model: claude-sonnet-5-5
 model_tier: T1
 ---
 
@@ -117,7 +117,7 @@ stage，机器 validate 后仍须真实语义自查才 commit --self-review-conf
 
 | 属性 | 值 |
 |---|---|
-| 推荐模型 | claude-sonnet-4-20250514 |
+| 推荐模型 | claude-sonnet-5-5 |
 | 模型分层 | T1（主力层） |
 | 分层理由 | 反AI编辑需要模式识别和文本改写能力，对模型的语言理解能力有较高要求但不需旗舰级推理 |
 | 降级策略 | 降级到 T2 时，只能做基础禁用词替换，复杂句式改写需人工介入 |

@@ -33,6 +33,30 @@
 
 general-novel-skill 支持在多个 AI 客户端平台使用：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。
 
+### 命令行安装（推荐）
+
+仓库根目录就是一个标准 skill，可用通用安装器一条命令装到已检测到的客户端：
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill
+```
+
+Claude Code 也可以通过插件市场安装，后续用 `/plugin` 更新：
+
+```text
+/plugin marketplace add xiaoyuCR7/general-novel-skill
+/plugin install general-novel-skill@general-novel-skill
+```
+
+### 先试写一章（轻量模式）
+
+不想先建书籍工程时，直接说“先写一章看看”或“帮我试个开头”。skill 会问五个问题
+（题材平台、主角与阻碍、核心看点、这一章的事、文风参照），给出 3–5 个 beats 的迷你章纲，
+确认后写出草稿并做一次机器自检。交付物标为「草稿，未入事务」；决定连载后再升级为完整工程。
+流程见 `references/workflow/quick-start.md`。
+
+去 AI 味的前后对照与可复现的机器结果见 `demo/deslop-before-after/`。
+
 ### 一键安装
 
 **Linux/macOS (Bash):**

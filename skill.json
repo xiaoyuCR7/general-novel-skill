@@ -79,11 +79,11 @@
     "last_reviewed": "2026-09-10",
     "review_interval_days": 90,
     "genre_cards_count": 34,
-    "scripts_count": 46,
-    "tests_count": 1209,
+    "scripts_count": 47,
+    "tests_count": 1231,
     "craft_files_count": 50,
-    "workflow_files_count": 29,
-    "reference_files_count": 117
+    "workflow_files_count": 30,
+    "reference_files_count": 118
   },
   "source_references": [
     {

@@ -28,6 +28,8 @@ from pathlib import Path
 TEST_MODULES = [
     "test_common",
     "test_check_text",
+    "test_tracking_delta",
+    "test_blind_review_fixes",
     "test_config",
     "test_novel_flow",
     "test_mcp_server",
