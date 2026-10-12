@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""test_blind_review_fixes.py — 四 skill 盲评测试暴露问题的回归用例。"""
+"""test_blind_review_fixes.py — 匿名盲评测试暴露问题的回归用例。"""
 
 import io
 import sys
@@ -30,6 +30,18 @@ class TestCastParsing(unittest.TestCase):
     def test_off_page_people_are_not_required_cast(self):
         self.assertEqual(self.cast("- 次要：订单顾客（只在电话里）、刘姐(微信提及)、老周（回忆）"), [])
         self.assertEqual(self.cast("- 次要：老秦（站长）、急救员（龙套）"), ["老秦"])
+
+
+class TestNotReadyPacket(unittest.TestCase):
+    def test_refused_selection_is_reported_as_not_ready_not_malformed(self):
+        from context_manager import verify_context
+        packet = {"ready": False, "errors": ["transaction_incomplete"], "components": {},
+                  "source_manifest": [], "package_sha256": "0" * 64}
+        with tempfile.TemporaryDirectory() as directory:
+            result = verify_context(Path(directory), packet)
+        self.assertEqual(result["status"], "not_ready")
+        self.assertEqual(result["errors"], ["packet_not_ready: transaction_incomplete"])
+        self.assertFalse(result["ready"])
 
 
 class TestOutlineLock(unittest.TestCase):

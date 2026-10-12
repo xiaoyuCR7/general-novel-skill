@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """hooks.py — 自动化 Hook 机制（纯标准库，无第三方依赖）。
 
-参考 oh-story-claudecode 的自动化 hook 设计，但改为纯 Python 标准库实现，
-适配本 skill 的四目录文件结构（正文/、大纲/、追踪/、设定/）。
+纯 Python 标准库实现，适配本 skill 的四目录文件结构（正文/、大纲/、追踪/、设定/）。
 
 五个子命令：
   1. session-start    会话开始时显示进度快照

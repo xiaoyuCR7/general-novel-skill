@@ -14,7 +14,7 @@
 
 - 轻量意图路由、章意图契约、场景渲染、大纲不足时的 `outline_underfilled` 停止协议，以及正文与追踪的事务边界。
 - 本地 Dashboard 的路径隔离、revision 冲突保护、原子保存、备份和可恢复删除。
-- 46 个顶层 Python 脚本、117 份 reference（50 份 craft、29 份 workflow）、24 个 MCP tool；测试收集数由 `skill.json` 与发布契约核对。平台不支持的符号链接测试可能跳过，运行器分别报告通过、失败与跳过。
+- 47 个顶层 Python 脚本、118 份 reference（50 份 craft、30 份 workflow）、24 个 MCP tool；测试收集数由 `skill.json` 与发布契约核对。平台不支持的符号链接测试可能跳过，运行器分别报告通过、失败与跳过。
 - skill 契约、公开版本一致性、工作流闭环和关键文件事务均有确定性校验。
 - 限时场景的时间—行动闭环已验证：只使用合法时间来源，整体至少一项时间证据改变后续取舍、分工、顺序、风险判断或验收；主要耗时分支以授权动作中的过程进展、阻力变化或累计身体/环境反馈中的至少一项呈现窗口消耗。
 
@@ -125,7 +125,7 @@ cp assets/agents/*.md {书籍工程根}/.trae/agents/
 general-novel-skill/
 ├── SKILL.md                  # 核心入口：触发条件、工作流总览、Iron Law、题材/平台加载协议
 ├── references/
-│   ├── workflow/             # 工作流（当前 29 个）
+│   ├── workflow/             # 工作流（当前 30 个，含无工程试写的 quick-start.md）
 │   │   ├── book-init.md          # 开书流程（长篇，对接 init_book.py）
 │   │   ├── chapter-loop.md       # 单章写作循环
 │   │   ├── outline-system.md     # 三级大纲 + 大纲锚点配额
@@ -188,11 +188,11 @@ general-novel-skill/
 │   │   └── {题材}.md × 34          # 每题材一张卡（12栏目+九件事，逐步补齐）
 │   └── platforms/            # 平台基线：长篇 + 短篇
 ├── assets/
-│   ├── templates/            # 书籍工程模板（17 个）
+│   ├── templates/            # 书籍工程模板（20 个）
 │   ├── agents/               # 编辑团队可部署资产（4 个角色 + README）
 │   └── style_library/        # 风格库（跨书复用）
 │       └── index.json         # 风格库索引
-└── scripts/                  # 机械闸口、量化与验证工具（纯标准库，共 46 个）
+└── scripts/                  # 机械闸口、量化与验证工具（纯标准库，共 47 个）
     ├── common.py                 # 共享工具函数（文件I/O+文本处理+章节解析）
     ├── config.py                 # 全局配置常量（目录结构+文件名+BM25参数）
     ├── check_text.py             # 7 Gate + 字数 + 禁用词 + 毒句式 + 伏笔超期 + 量化打分 + 7类AI模式检测 + --deslop分级 + --whitelist
@@ -205,6 +205,7 @@ general-novel-skill/
     ├── init_book.py              # 一键初始化书籍工程骨架
     ├── resume.py                 # 会话恢复报告（欠账门机器查验）
     ├── validate_tracking.py      # 追踪文件格式校验
+    ├── tracking_delta.py         # 写后事实增量：追踪变更逐条核对正文出处 + 生成章节摘要条目
     ├── outline_anchor.py         # 大纲锚点动态约束注入 + 配额兼容检查
     ├── story_graph.py            # 知识图谱（节点+边+版本+级联标记+Mermaid导出）
     ├── research_agent.py         # 联网调研（缺口检测+关键词生成+结构化存储）
@@ -310,7 +311,7 @@ general-novel-skill/
 
 ## 安装
 
-把本目录拷入你所用工具的 skills 目录，例如：
+推荐用上文「命令行安装」的 `npx skills add` 或 Claude Code 插件市场。手动安装时，把本目录拷入你所用工具的 skills 目录，例如：
 
 ```bash
 # Claude Code（用户级）
@@ -324,14 +325,16 @@ cp -R general-novel-skill ~/.agents/skills/
 
 ## 用法速览
 
+0. **试写**：「先写一章看看」→ 按 `workflow/quick-start.md` 走轻量模式：五个问题 → 迷你章纲 → 草稿，
+   不建工程，交付标「草稿，未入事务」。
 1. **开书**：「开书：男频玄幻，发番茄」→
    先 `python scripts/init_book.py "{书名}" --genre 玄幻 --platform 番茄` 建骨架，
    再按 `workflow/book-init.md` 走完定位/契约/人物/**敏感词替换表（与世界观同步建，真实地名/机构/人物 → 全书代称）**/总纲/卷纲/章纲，
    落定读者契约与文风锚。
 2. **写章**：「写第 37 章」→ 按 `workflow/chapter-loop.md` 走：
-   先跑 `resume.py` 查欠账 → 读章纲 → 节奏预检 → 检索上下文（必要时 `entity_index.py query` / `context_manager.py select`） → 写正文 →
+   先跑 `resume.py` 查欠账 → 读章纲（状态须为「已锁定」，否则 `prepare` 以 `outline_unlocked` 拒绝） → 节奏预检 → 检索上下文（必要时 `entity_index.py query` / `context_manager.py select`） → 写正文 →
    内容扩充（必要时 `content_expander.py analyze`） → 标点归一化 → 三条机器闸口 → 质量评分（`quality_score.py score`） →
-   自查清单 → 更新追踪五文件 → 跑 `validate_tracking.py` 复核 → 重建实体索引。
+   自查清单 → 更新追踪五文件 → `tracking_delta.py check` 核对每条变更的正文出处 → 跑 `validate_tracking.py` 复核 → 重建实体索引。
 3. **写短篇**：「写一篇番茄短篇」→ 按 `workflow/short-story-loop.md` 走短篇五段式，
    定稿后**默认加结尾句**（简短，一句顶满），按 `craft/short-story-ending.md` 写点睛句/彩蛋句/碎碎念。
 4. **拆文**：「拆解这本对标书」→ 按 `workflow/deconstruct.md` 走，产出存入 `对标/{书名}/`。
@@ -343,7 +346,7 @@ cp -R general-novel-skill ~/.agents/skills/
 
 ## 脚本说明
 
-46 个顶层脚本均为纯标准库实现并纳入 Python 3.8+ 语法检查；各 CLI 的退出码以其 `--help` 为准。
+47 个顶层脚本均为纯标准库实现并纳入 Python 3.8+ 语法检查；各 CLI 的退出码以其 `--help` 为准。
 脚本通过文件名约定与 `追踪/门禁/gate_chN.json`、`追踪/entity_index.json` 等约定路径互相协作，
 不依赖任何 agent，是质量底线。
 
@@ -519,6 +522,18 @@ python scripts/validate_tracking.py . --file "追踪/伏笔台账.md"
 节奏配额三节齐备（A/B/C 配额 / 事件冷却 / 档位）；章节摘要每个 `### 第N章` 含七个必填字段；
 角色状态每个 `## 角色` 含四个必填字段；时间线表格列数 ≥4。每 10 章或新会话首次校验一次，
 防止模型把格式写歪导致下游脚本静默漏检。
+
+### tracking_delta.py — 写后事实增量的证据核对
+
+```bash
+python scripts/tracking_delta.py check "{工程外增量.json}" --chapter-file "{stage}/正文/{chapter_file}" --ledger "{stage}/追踪/伏笔台账.md"
+python scripts/tracking_delta.py apply-summary "{工程外增量.json}" --summary-file "{stage}/追踪/章节摘要.md"
+```
+
+事务保证正文与五表一起落盘，不保证表里的事实正文里真的发生过。增量文件按
+`assets/templates/tracking-delta.json` 填写，每条追踪变更附一段正文原文摘录；`check` 核对摘录逐字存在、
+关键实体在正文出现、伏笔 ID 已登记，`apply-summary` 用同一份增量生成或替换本章摘要条目。
+它只证明“有出处”，不替代语义自查。
 
 ### 11. entity_index.py — BM25 两级语义检索 + 实体索引
 
@@ -839,8 +854,5 @@ agent 定义文件 + 部署/降级/防死循环协议。
 - maintainer: 熊小雨
 - version: 8.2.0
 - created: 2026-07-26
-- last_reviewed: 2026-08-30
+- last_reviewed: 2026-10-12
 - review_interval_days: 90
-- source_references:
-  - skills/novel-creator-skill（借鉴五层一致性/Beat Sheet/节奏配额/语义级节奏审查/知识图谱/联网调研/风格库设计，未引用内容）
-  - skills/oh-story-claudecode（借鉴7 Gate/拆文/扫榜/短篇/对话精通/悬念分级/信息团/爆款语料设计，未引用内容）

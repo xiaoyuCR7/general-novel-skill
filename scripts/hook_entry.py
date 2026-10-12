@@ -16,7 +16,7 @@ tool_input，自动定位书籍工程目录，分发到 hooks.py 对应子命令
     PostToolUse  → 若工具写了正文 → hooks.py check-prose <file> --book-dir <book>
     PreCompact   → hooks.py pre-compact <book>
 
-阻断语义（对齐 oh-story 的「宁可漏拦不可误伤」）：
+阻断语义（宁可漏拦不可误伤）：
     hooks.py 返回 1（blocking 规则命中）→ 本脚本 exit 2（平台级阻断工具）
     其余（0 通过 / 2 参数错误 / 异常 / JSON 解析失败 / 无法定位 book）→ exit 0 放行
 

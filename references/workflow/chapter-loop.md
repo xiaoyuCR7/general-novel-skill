@@ -149,6 +149,10 @@ python scripts/rhythm_guard.py --quota "{book}/追踪/节奏配额.md" --declare
 
 ### Step 3B：创建章事务
 
+上下文包在 prepare 之前装配并 verify。事务进行中 `context_manager.py select` 会以
+`transaction_incomplete` 拒绝并退出 1，此时写出的包不可用；需要更换来源时先 recover，
+改完后先重新 select 与 verify，再重新 prepare。
+
 ```bash
 python scripts/chapter_transaction.py prepare "{book}" --chapter {N}
 ```
@@ -228,6 +232,12 @@ blocking 项则输出 `gate_blocked`，保留 checkpoint 与 pending draft，can
 WARN（临近回收窗口、配额接近上限）纳入本章或下章的写作计划。
 
 ## Step 6：章节检查清单
+
+没有独立 Agent 复核时（单 Agent 循环或团队不可用），先做一次冷读再对清单：只读候选正文，
+不看章意图与章纲，写下三句读者视角的回答——主角这一章为什么这么选、他为此付出了什么、
+读完最想知道的下一件事是什么。再对照章意图：答不上来或与 `choice_or_cost`、`hook_question`
+对不上，按 P1 处理；关键因果答不出按 P0。报告中写明“未经独立复核，仅冷读自查”，
+不把自查写成独立审核通过。
 
 主 Agent 对当前候选稿真实逐项核对；不适用项标 N/A 并说明。任一 blocking/P0 未过就不能
 commit，只能在剩余额度内定向修复；两轮耗尽按 gate_blocked 停止，不无限回去改：

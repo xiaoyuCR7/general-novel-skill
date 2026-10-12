@@ -5,8 +5,7 @@
 解决百万字长篇写作中的"上下文爆炸"问题。不是把所有文件塞进上下文，
 而是智能选取"不知道就会写错"的最小信息集。
 
-参考 novel-creator-skill 的 long_term_context_manager.py 设计，
-但改为纯标准库实现，且集成本 skill 的四目录文件系统。
+纯标准库实现，集成本 skill 的四目录文件系统。
 
 核心功能：
   1. compress — 压缩章节摘要（多章合并为回顾段）
@@ -428,6 +427,12 @@ def verify_context(book_dir: Path, packet: Any) -> Dict[str, Any]:
         return result
     manifest = packet["source_manifest"]
     digest = packet["package_sha256"]
+    packet_errors = packet.get("errors", [])
+    if (packet.get("ready") is False and manifest == [] and isinstance(packet_errors, list)
+            and packet_errors and all(isinstance(e, str) for e in packet_errors)):
+        # select 当时就拒绝了（例如事务未完成），这不是包损坏：把原始原因交还给调用方。
+        result.update(status="not_ready", errors=["packet_not_ready: " + e for e in packet_errors])
+        return result
     if (not isinstance(manifest, list) or not manifest
             or not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)
             or type(packet.get("ready")) is not bool or not isinstance(packet.get("components"), dict)
@@ -1421,6 +1426,11 @@ def main():
         else:
             print(output)
         if not context["ready"]:
+            reasons = context.get("errors") or context.get("missing_required") or ["required_context_missing"]
+            print("上下文包未就绪，不能用于写作：" + "；".join(str(r) for r in reasons), file=sys.stderr)
+            if "transaction_incomplete" in reasons:
+                print("本章事务尚未结束：select 须在 prepare 之前运行；"
+                      "要更换来源请先 recover，改完后先 select 再重新 prepare。", file=sys.stderr)
             sys.exit(1)
 
     elif args.command == "inspect-state":

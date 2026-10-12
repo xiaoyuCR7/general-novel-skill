@@ -76,32 +76,15 @@
     "homepage": "https://github.com/xiaoyuCR7/general-novel-skill",
     "repository": "https://github.com/xiaoyuCR7/general-novel-skill",
     "created": "2026-07-26",
-    "last_reviewed": "2026-09-10",
+    "last_reviewed": "2026-10-12",
     "review_interval_days": 90,
     "genre_cards_count": 34,
     "scripts_count": 47,
-    "tests_count": 1231,
+    "tests_count": 1232,
     "craft_files_count": 50,
     "workflow_files_count": 30,
     "reference_files_count": 118
   },
-  "source_references": [
-    {
-      "name": "novel-creator-skill",
-      "contribution": "五层一致性、Beat Sheet、节奏配额、语义级节奏审查、知识图谱、联网调研、风格库设计",
-      "license": "unverified (README declares MIT)",
-      "repository": "https://github.com/leenbj/novel-creator-skill",
-      "revision": "a327428ea26962163f823ad74001243f91bc7738",
-      "license_evidence": "GitHub API did not identify a license; no standalone LICENSE found in the reviewed tree"
-    },
-    {
-      "name": "oh-story-claudecode",
-      "contribution": "7 Gate、拆文、扫榜、短篇、对话精通、悬念分级、信息团、爆款语料设计",
-      "license": "MIT",
-      "repository": "https://github.com/zenstory-ai/oh-story-claudecode",
-      "revision": "5de060f9a47e7c4781c81edb320436b772e2955e"
-    }
-  ],
   "features": {
     "core_contracts": [
       "lightweight_intent_router",
