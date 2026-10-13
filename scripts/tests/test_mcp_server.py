@@ -7,9 +7,17 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from mcp_server.server import _entity_index_args, _rag_retriever_args, _story_graph_args
+# MCP server 的依赖（mcp、pydantic）是可选的，核心 skill 为零依赖；
+# 未安装时跳过而不是让整个模块导入失败。
+try:
+    from mcp_server.server import _entity_index_args, _rag_retriever_args, _story_graph_args
+    MCP_IMPORT_ERROR = None
+except ImportError as exc:
+    MCP_IMPORT_ERROR = exc
 
 
+@unittest.skipIf(MCP_IMPORT_ERROR is not None,
+                 "MCP server 可选依赖未安装：{}".format(MCP_IMPORT_ERROR))
 class TestMcpPositionalQueries(unittest.TestCase):
     def test_quality_trend_uses_book_positional_and_score_keeps_chapter(self):
         from mcp_server.server import _quality_score_args, QualityScoreInput

@@ -14,6 +14,10 @@ on:
 permissions:
   contents: read
 
+env:
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+
 jobs:
   # Ubuntu 测试
   ubuntu-test:
@@ -23,11 +27,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
+        os: [ubuntu-22.04, ubuntu-latest]
         python-version: ['3.8', '3.10', '3.12']
-        exclude:
-          - os: ubuntu-20.04
-            python-version: '3.12'
     steps:
       - uses: actions/checkout@v4
 
@@ -63,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, macos-14, macos-latest]
+        os: [macos-14, macos-latest]
         python-version: ['3.9', '3.10', '3.12']
     steps:
       - uses: actions/checkout@v4
@@ -100,7 +101,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019, windows-2022, windows-latest]
+        os: [windows-2022, windows-latest]
         python-version: ['3.8', '3.10', '3.12']
     steps:
       - uses: actions/checkout@v4

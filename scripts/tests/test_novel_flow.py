@@ -404,7 +404,7 @@ class TestCheckTrackingSync(unittest.TestCase):
 
     def test_sync_missing_chapter(self):
         """追踪文件不包含目标章节时应返回 False。"""
-        (self.root / "追踪" / "章节摘要.md").write_text("### 第3章\n摘要")
+        (self.root / "追踪" / "章节摘要.md").write_text("### 第3章\n摘要", encoding="utf-8")
         result = check_tracking_sync(self.root, 5)
         self.assertFalse(result["章节摘要"])
 

@@ -31,6 +31,10 @@ on:
 permissions:
   contents: read
 
+env:
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+
 jobs:
   # Job 1: 编译与语法检查
   compile-check:
@@ -78,6 +82,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: 安装 MCP server 可选依赖（Python 3.10+）
+        if: matrix.python-version != '3.8' && matrix.python-version != '3.9'
+        run: python -m pip install -r mcp_server/requirements.txt
 
       - name: 运行单元测试套件
         run: |

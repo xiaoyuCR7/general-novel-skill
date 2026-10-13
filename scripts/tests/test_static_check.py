@@ -263,9 +263,9 @@ class TestCheckSync(unittest.TestCase):
 
     def test_sync_pass(self):
         """追踪文件更新到最新章时通过。"""
-        (self.root / "追踪" / "章节摘要.md").write_text("### 第5章\n摘要")
-        (self.root / "追踪" / "角色状态.md").write_text("第5章状态")
-        (self.root / "正文" / "第005章.md").write_text("正文内容")
+        (self.root / "追踪" / "章节摘要.md").write_text("### 第5章\n摘要", encoding="utf-8")
+        (self.root / "追踪" / "角色状态.md").write_text("第5章状态", encoding="utf-8")
+        (self.root / "正文" / "第005章.md").write_text("正文内容", encoding="utf-8")
         result = check_sync(self.root, target_chapter=5)
         self.assertIn(result.status, ("PASS", "WARN"))
 

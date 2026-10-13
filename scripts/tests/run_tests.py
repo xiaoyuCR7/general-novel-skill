@@ -20,6 +20,7 @@
 import io
 import os
 import sys
+import tempfile
 import time
 import unittest
 from pathlib import Path
@@ -137,7 +138,23 @@ def _make_failed_result(error):
     return result
 
 
+def _prepare_environment():
+    """临时目录改用真实路径，子进程统一 UTF-8 输出。
+
+    Windows runner 的 TEMP 是 8.3 短路径（RUNNER~1），macOS 的 TMPDIR 位于
+    /var -> /private/var 之下；被测脚本会拒绝链接路径或返回解析后的长路径，
+    测试夹具若用未解析的临时目录就会在这两类平台上误报。
+    """
+    real_tmp = os.path.realpath(tempfile.gettempdir())
+    tempfile.tempdir = real_tmp
+    for key in ("TMPDIR", "TEMP", "TMP"):
+        os.environ[key] = real_tmp
+    os.environ.setdefault("PYTHONUTF8", "1")
+    os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+
+
 def main(argv):
+    _prepare_environment()
     # Windows 控制台 UTF-8 输出
     for stream in (sys.stdout, sys.stderr):
         try:
