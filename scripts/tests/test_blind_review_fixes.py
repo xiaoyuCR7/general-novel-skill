@@ -73,6 +73,146 @@ class TestDashboardFacts(unittest.TestCase):
             self.assertEqual(ledger[0]["content"], "头顶的数")
 
 
+class TestOutlinePlanRhythm(unittest.TestCase):
+    QUOTA = "\n".join([
+        "## A/B/C 配额记录", "", "| 章节 | 配额 | 触发内容 |", "|---|---|---|", "| 第1章 | A | 开局 |", "",
+        "## 事件冷却记录", "", "| 章节 | 事件类型 | 事件内容 |", "|---|---|---|", "| 第1章 | crisis | 开局 |", "",
+        "## 档位记录", "", "| 章节 | 档位 |", "|---|---|", "| 第1章 | 中 |", "",
+    ])
+
+    def outline(self, event):
+        return "\n".join(["## 基本信息", "", "- 节奏档位：中档", "- A/B/C 配额预声明：不触发",
+                          "- 事件类型：" + event, ""])
+
+    def run_plan(self, events):
+        import rhythm_guard
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "quota.md").write_text(self.QUOTA, encoding="utf-8")
+            (root / "大纲").mkdir()
+            for chapter, event in events.items():
+                (root / "大纲" / "章纲_第{:03d}章.md".format(chapter)).write_text(self.outline(event), encoding="utf-8")
+            records = rhythm_guard.parse_quota_file(str(root / "quota.md"))
+            output = io.StringIO()
+            with redirect_stdout(output):
+                code = rhythm_guard.check_outline_plan(records, str(root / "大纲"))
+            return code, output.getvalue(), (root / "quota.md").read_text(encoding="utf-8")
+
+    def test_batch_catches_cooldown_between_planned_chapters_without_writing(self):
+        code, output, quota_after = self.run_plan({2: "world", 3: "bond", 4: "bond"})
+        self.assertEqual(code, 1)
+        self.assertIn("第4章", output)
+        self.assertIn("bond 第3章触发", output)
+        self.assertEqual(quota_after, self.QUOTA)
+
+    def test_compatible_batch_passes_and_recorded_chapters_are_skipped(self):
+        code, output, _ = self.run_plan({1: "bond", 2: "world", 3: "bond"})
+        self.assertEqual(code, 0)
+        self.assertNotIn("第1章：", output)
+
+
+class TestTimelineSameDay(unittest.TestCase):
+    def issues(self, second_desc):
+        import timeline_manager
+        text = "\n".join([
+            "## 时间锚点", "", "| 编号 | 标签 | 时间表达式 |", "|---|---|---|", "| A1 | 起点 | 第1天 |", "",
+            "## 第 1 卷", "", "| 章节 | 故事内时间 | 事件 | 时间标记/约定 |", "|---|---|---|---|",
+            "| 第1章 | @A1+1（第2天 00:07 至 01:57） | 甲 | 无 |",
+            "| 第2章 | " + second_desc + " | 乙 | 无 |", "",
+        ])
+        with tempfile.TemporaryDirectory() as directory:
+            book = Path(directory) / "book"
+            (book / "追踪").mkdir(parents=True)
+            (book / "追踪" / "时间线.md").write_text(text, encoding="utf-8")
+            output = io.StringIO()
+            argv = sys.argv
+            sys.argv = ["timeline_manager.py", "check", str(book)]
+            try:
+                with redirect_stdout(output):
+                    try:
+                        timeline_manager.main()
+                    except SystemExit:
+                        pass
+            finally:
+                sys.argv = argv
+            return output.getvalue()
+
+    def test_same_day_with_different_clock_times_is_sequential(self):
+        self.assertNotIn("C5_branch_time_conflict", self.issues("@A1+1（第2天 02:00 至 08:40）"))
+
+    def test_same_day_without_clock_times_still_warns(self):
+        self.assertIn("C5_branch_time_conflict", self.issues("@A1+1（第2天，另一条线）"))
+
+
+class TestTimelineScaling(unittest.TestCase):
+    """百万字规模下，时间线的活跃部分不随章数增长，未了结的约定不因为旧而丢失。"""
+
+    HEADER = ["# 时间线", "", "## 时间锚点", "", "| 编号 | 标签 | 时间表达式 |", "|---|---|---|",
+              "| A1 | 开局 | 第1天 |", "", "## 第 1 卷", "",
+              "| 章节 | 故事内时间 | 事件 | 时间标记/约定 |", "|---|---|---|---|"]
+
+    def timeline(self, chapters):
+        rows = []
+        for n in range(1, chapters + 1):
+            promise = "无"
+            if n == 30:
+                promise = "三年之约：第三年冬至回山"
+            elif n == 40:
+                promise = "十日后交货；约定已兑现"
+            elif n == 55:
+                promise = "闪回；依据：世界观第三条"
+            rows.append("| 第{}章 | @A1+{} | 事件{} | {} |".format(n, n, n, promise))
+        return "\n".join(self.HEADER + rows) + "\n"
+
+    def test_only_recent_open_and_cited_rows_are_kept(self):
+        import context_manager as cm
+        text, stats = cm._select_timeline_rows(self.timeline(800), 801, "本章回到 @A1 那天，并呼应第120章的雪夜。")
+        self.assertIn("| A1 | 开局 | 第1天 |", text)
+        self.assertIn("三年之约", text)
+        self.assertIn("| 第120章 |", text)
+        self.assertIn("| 第791章 |", text)
+        self.assertIn("| 第800章 |", text)
+        for dropped in ("| 第40章 |", "| 第55章 |", "| 第500章 |", "| 第790章 |"):
+            self.assertNotIn(dropped, text)
+        self.assertIn("已省略", text)
+        self.assertEqual(stats["kept_open_commitments"], 1)
+        self.assertEqual(stats["kept_cited_by_outline"], 1)
+        self.assertEqual(stats["kept"] + stats["omitted"], 800)
+        self.assertLess(len(text), len(self.timeline(800)) // 20)
+
+    def test_small_books_and_unknown_text_are_untouched(self):
+        import context_manager as cm
+        short = self.timeline(8)
+        self.assertEqual(cm._select_timeline_rows(short, 9)[0], short)
+        legacy = "# 时间线\n第3章：铜门只能由两人同时开启。\n" * 50
+        self.assertEqual(cm._select_timeline_rows(legacy, 400)[0], legacy)
+
+    def test_selected_size_does_not_grow_with_chapter_count(self):
+        import context_manager as cm
+        small = len(cm._select_timeline_rows(self.timeline(200), 201)[0])
+        large = len(cm._select_timeline_rows(self.timeline(2000), 2001)[0])
+        self.assertLess(large - small, 200)
+
+    def test_archive_candidate_keeps_open_commitments_active(self):
+        import context_manager as cm
+        import timeline_manager as tm
+        candidate = tm.build_archive_candidate(self.timeline(60), 50)
+        self.assertEqual(len(candidate["open"]), 1)
+        self.assertIn("三年之约", candidate["open"][0])
+        self.assertEqual(candidate["archived"], 49)
+        text = candidate["text"]
+        self.assertIn("## 当前时间位置", text)
+        self.assertIn("截至第50章：@A1+50", text)
+        self.assertLess(text.index("## 未完成的约定与期限"), text.index("## 历史记录（第50章及以前，已归档）"))
+        selection = cm._tracking_selection(text, "timeline")
+        self.assertIn("三年之约", selection["content"])
+        self.assertIn("| 第60章 |", selection["content"])
+        self.assertNotIn("| 第20章 |", selection["content"])
+        self.assertGreater(selection["omitted_chars"], 0)
+        self.assertEqual(len(tm.parse_timeline(text)["chapters"]), 60)
+        self.assertIsNone(tm.build_archive_candidate(self.timeline(5), 0))
+
+
 class TestOutlineLock(unittest.TestCase):
     def make_book(self, directory, outline_text):
         book = Path(directory) / "book"

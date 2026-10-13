@@ -1,0 +1,33 @@
+{
+  "chapter": 4,
+  "chapter_file": "第004章.md",
+  "chapter_mtime": 1791826198.125985,
+  "chapter_sha256": "4e84b883fa04d6e72fe939e1bd2ca49037a5dfbe14cadb91bbcd5cca4b575347",
+  "checked_at": "2026-10-12T13:29:58",
+  "passed": true,
+  "blocking": 0,
+  "advisory": 1,
+  "ai_score": 0.0,
+  "categories": {
+    "banned_blocking": 0,
+    "banned_advisory": 0,
+    "toxic_blocking": 0,
+    "toxic_advisory": 0,
+    "gate_c": 0,
+    "gate_g_meta_refusal": 0,
+    "trailer": 0,
+    "density_advisory": 0,
+    "structure_advisory": 0,
+    "para_tics_advisory": 0,
+    "gate_f": 0,
+    "degradation_advisory": 1
+  },
+  "style_exemptions": [],
+  "rhythm": {
+    "passed": true,
+    "fails": 0,
+    "warns": 0,
+    "declare": "配额 无，事件 world，档位 慢",
+    "checked_at": "2026-10-12T13:29:58"
+  }
+}

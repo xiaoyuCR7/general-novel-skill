@@ -1,0 +1,33 @@
+{
+  "chapter": 3,
+  "chapter_file": "第003章.md",
+  "chapter_mtime": 1791826196.5343273,
+  "chapter_sha256": "65264b5942df018b06ec6bddeb8c16a05fcdfa182fd8322a95da329e6b9c34ec",
+  "checked_at": "2026-10-12T13:29:57",
+  "passed": true,
+  "blocking": 0,
+  "advisory": 1,
+  "ai_score": 0.0,
+  "categories": {
+    "banned_blocking": 0,
+    "banned_advisory": 0,
+    "toxic_blocking": 0,
+    "toxic_advisory": 0,
+    "gate_c": 0,
+    "gate_g_meta_refusal": 0,
+    "trailer": 0,
+    "density_advisory": 0,
+    "structure_advisory": 0,
+    "para_tics_advisory": 0,
+    "gate_f": 0,
+    "degradation_advisory": 1
+  },
+  "style_exemptions": [],
+  "rhythm": {
+    "passed": true,
+    "fails": 0,
+    "warns": 0,
+    "declare": "配额 无，事件 bond，档位 中",
+    "checked_at": "2026-10-12T13:29:57"
+  }
+}

@@ -812,6 +812,15 @@ def _required_context(book_dir: Path, chapter: int, reader=None):
     for kind, path in (("foreshadowing", foreshadow_path), ("timeline", timeline_path)):
         raw = read(path)
         selection = _tracking_selection(raw, kind)
+        if kind == "timeline" and raw.strip():
+            trimmed, rows = _select_timeline_rows(
+                selection["content"], chapter, components.get("chapter_brief", {}).get("content", ""))
+            if rows["omitted"]:
+                selection["omitted_chars"] += count_chars(selection["content"]) - count_chars(trimmed)
+                selection["selected_chars"] = count_chars(trimmed)
+                selection["mode"] += "+recent_rows"
+                selection["content"] = trimmed
+            selection["rows"] = rows
         add(kind, path, selection.pop("content") if raw.strip() else "")
         if kind in components:
             components[kind]["selection"] = selection
@@ -1220,6 +1229,59 @@ def _tracking_selection(content: str, kind: str) -> Dict[str, Any]:
             "sections": sections,
             "next_action": "context_manager.py inspect-state：生成工程外整理候选，未知条目须人工核对",
             "manual_review_required": not recognized or any(s["reason"] == "unknown_preserved" for s in sections)}
+
+
+TIMELINE_RECENT_CHAPTERS = 10
+_TIMELINE_ROW_RE = re.compile(r"^\s*\|\s*第\s*(\d+)\s*章\s*\|")
+# 约定列写了这些词，表示该行的约定/期限已经了结，不再是后文的硬约束。
+_TIMELINE_SETTLED_RE = re.compile(r"已兑现|已结清|已了结|已作废|已取代|已失效|已到期")
+_TIMELINE_EMPTY_CELLS = {"", "无", "-", "—", "–", "/", "N/A", "n/a", "暂无"}
+
+
+def _select_timeline_rows(content: str, target_chapter: int, outline_text: str = ""):
+    """按行裁剪时间线表：保留近章、未了结的约定、本章章纲以「第N章」点名的旧行。
+
+    只处理模板格式的章节行（`| 第N章 | 故事内时间 | 事件 | 时间标记/约定 |`）；标题、锚点表、
+    说明和任何认不出的文字原样保留。一行是否仍是硬约束看「约定」列，而不是看它有多旧：
+    约定列非空且没有写明已了结的行永远保留。被省略的行仍在文件里，可按需检索。
+    """
+    lines = content.splitlines()
+    cited = {int(n) for n in re.findall(r"第\s*(\d+)\s*章", outline_text or "")}
+    kept, omitted, open_rows, cited_rows = [], [], 0, 0
+    out, run = [], []
+
+    def flush():
+        if run:
+            first, last = run[0], run[-1]
+            span = "第{}章".format(first) if first == last else "第{}–{}章".format(first, last)
+            out.append("（已省略{}共 {} 行已了结的历史时间行；需要时检索 追踪/时间线.md）".format(span, len(run)))
+            run.clear()
+
+    for line in lines:
+        match = _TIMELINE_ROW_RE.match(line)
+        if not match:
+            flush()
+            out.append(line)
+            continue
+        chapter = int(match.group(1))
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        promise = cells[3] if len(cells) > 3 else ""
+        is_open = (promise not in _TIMELINE_EMPTY_CELLS and not _TIMELINE_SETTLED_RE.search(promise)
+                   and re.split(r"[；;]", promise)[0].strip() not in ("闪回", "插叙", "时间回溯", "时间循环", "重生"))
+        is_cited = chapter in cited
+        if chapter >= target_chapter - TIMELINE_RECENT_CHAPTERS or is_open or is_cited:
+            flush()
+            out.append(line)
+            kept.append(chapter)
+            open_rows += bool(is_open and chapter < target_chapter - TIMELINE_RECENT_CHAPTERS)
+            cited_rows += bool(is_cited and not is_open and chapter < target_chapter - TIMELINE_RECENT_CHAPTERS)
+        else:
+            run.append(chapter)
+            omitted.append(chapter)
+    flush()
+    stats = {"kept": len(kept), "omitted": len(omitted), "recent_window": TIMELINE_RECENT_CHAPTERS,
+             "kept_open_commitments": open_rows, "kept_cited_by_outline": cited_rows}
+    return ("\n".join(out) if omitted else content), stats
 
 
 def extract_active_foreshadows(foreshadow_content: str, target_chapter: int) -> str:

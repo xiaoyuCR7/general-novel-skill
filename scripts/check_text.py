@@ -2318,7 +2318,8 @@ def main():
     stats = {"blocking": 0, "advisory": 0, "ai_score": 0.0, "categories": {}}
 
     if args.min_chars and non_ws < args.min_chars:
-        print(f"[FAIL] 字数不足：{non_ws} < 下限 {args.min_chars}")
+        print(f"[FAIL] 字数不足：{non_ws} < 下限 {args.min_chars}（差 {args.min_chars - non_ws} 字）；"
+              "按章纲各情节点的预算对账，缺口补在缺回合的情节点里，不在章末加感想、不新增事件")
         failed = True
     if args.max_chars and non_ws > args.max_chars:
         print(f"[FAIL] 字数超限：{non_ws} > 上限 {args.max_chars}")

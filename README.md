@@ -3,8 +3,6 @@
 写长篇网文的 agent skill（**v8.2.0**）：正文和设定一起提交，追踪表里的每条事实都查得到正文出处，
 去 AI 味不把好句子改坏。适用于 Claude Code、Codex、Cursor、OpenCode 等支持 skill 的客户端。
 
-![本地 Dashboard：章节、字数、门禁与伏笔一屏看清](assets/screenshots/dashboard.png)
-
 ## 它解决什么
 
 - **写着写着吃书**：每章是一次事务，正文与章节摘要、角色状态、伏笔台账、时间线、节奏配额一起提交，
@@ -14,38 +12,18 @@
 - **断更之后接不上**：一条命令说清写到第几章、欠什么账、下一章章纲在不在。
 - **大纲被悄悄改写**：章纲不锁定进不了写作流程；锁定后只增不改。
 
-## 30 秒上手
+## 上手
 
-```bash
-npx skills add xiaoyuCR7/general-novel-skill
-```
-
-装好后在对话里直接说：
+把本仓库放进你所用客户端的 skills 目录（各平台路径见下文「跨平台安装」），然后在对话里直接说：
 
 > 先写一章看看：都市异能，外卖骑手能看见别人头顶的寿命倒计时。
 
 skill 会问清缺的信息，给出 3–5 个情节点的迷你章纲，确认后写出草稿并做一次机器自检。
 决定连载后再说「开书」，进入带追踪和事务的完整流程。
 
-Claude Code 用户也可以走插件市场，装完即有斜杠命令：
-
-```text
-/plugin marketplace add xiaoyuCR7/general-novel-skill
-/plugin install general-novel-skill@general-novel-skill
-```
-
-| 命令 | 做什么 |
-|---|---|
-| `/general-novel-skill:try` | 试写一章，不建工程 |
-| `/general-novel-skill:init` | 开书：定位、设定、总纲、卷纲、首批章纲 |
-| `/general-novel-skill:write` | 写下一章，正文与追踪一起提交 |
-| `/general-novel-skill:deslop` | 去 AI 味，最小修订 |
-| `/general-novel-skill:review` | 审稿，只报告不改稿 |
-| `/general-novel-skill:resume` | 断更恢复 |
-
 ## 看效果
 
-示例书 [`demo/看见倒计时的骑手/`](demo/看见倒计时的骑手/README.md) 是用完整流程写出来的两章连载，
+示例书 [`demo/看见倒计时的骑手/`](demo/README.md) 是用完整流程写出来的五章连载，
 正文、章纲、设定和五张追踪表都在里面。第 1 章里的一段：
 
 > “阿姨，把链子摘了，我背您下去。”
@@ -90,8 +68,6 @@ Claude Code 用户也可以走插件市场，装完即有斜杠命令：
 ## 跨平台安装
 
 general-novel-skill 支持在多个 AI 客户端平台使用：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。
-
-命令行安装、插件市场与试写见上文「30 秒上手」。下面是脚本安装与手动安装。
 
 ### 一键安装
 
@@ -338,6 +314,7 @@ general-novel-skill/
 | 一键开书骨架 | 一条命令建书籍工程目录 + 拷贝模板 | `scripts/init_book.py` |
 | 会话恢复 / 欠账门 | 开工先跑一次，把「写到哪/欠什么账/下一章是什么」说清 | `scripts/resume.py` |
 | 追踪格式校验 | 五个追踪文件的格式 schema 校验 | `scripts/validate_tracking.py` |
+| 时间线检查与归档 | 五类时间冲突检测；写章只加载锚点、近 10 章与未了结的约定，卷末生成归档候选 | `scripts/timeline_manager.py` |
 | 标点归一化 | 清理省略号/破折号/感叹堆叠等非功能性标点 | `scripts/normalize_punct.py` |
 | 大纲锚点约束注入 | 每章写前生成「禁止揭露/必须达成/阶段定位」约束 | `scripts/outline_anchor.py` |
 | 百万字结构展开 | 从一句话脑洞到 200-500 万字的可执行结构 | `workflow/book-scaling.md` |
@@ -349,7 +326,7 @@ general-novel-skill/
 
 ## 安装
 
-推荐用上文「命令行安装」的 `npx skills add` 或 Claude Code 插件市场。手动安装时，把本目录拷入你所用工具的 skills 目录，例如：
+把本目录拷入你所用工具的 skills 目录，例如：
 
 ```bash
 # Claude Code（用户级）

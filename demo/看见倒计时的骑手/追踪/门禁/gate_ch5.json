@@ -1,0 +1,33 @@
+{
+  "chapter": 5,
+  "chapter_file": "第005章.md",
+  "chapter_mtime": 1791826199.7372131,
+  "chapter_sha256": "6ffb47cce6ecd27e2b185490adfa82bb718ce2c15ec5955aab615a691ee81923",
+  "checked_at": "2026-10-12T22:29:33",
+  "passed": true,
+  "blocking": 0,
+  "advisory": 1,
+  "ai_score": 0.5,
+  "categories": {
+    "banned_blocking": 0,
+    "banned_advisory": 0,
+    "toxic_blocking": 0,
+    "toxic_advisory": 0,
+    "gate_c": 0,
+    "gate_g_meta_refusal": 0,
+    "trailer": 0,
+    "density_advisory": 0,
+    "structure_advisory": 1,
+    "para_tics_advisory": 0,
+    "gate_f": 0,
+    "degradation_advisory": 0
+  },
+  "style_exemptions": [],
+  "rhythm": {
+    "passed": true,
+    "fails": 0,
+    "warns": 0,
+    "declare": "配额 无，事件 crisis，档位 中",
+    "checked_at": "2026-10-12T22:29:33"
+  }
+}

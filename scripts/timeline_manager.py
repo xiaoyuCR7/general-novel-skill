@@ -383,6 +383,12 @@ def check_timeline(book_dir, target_chapter=None, md_text=None, json_out=False):
             if cur["time_value"] is None:
                 continue
             tv = (cur["time_value"], cur["time_unit"])
+            # 同一天里写明了不同钟点的两章是先后衔接，不是分支交错。
+            clock = re.compile(r"\d{1,2}[:：]\d{2}")
+            earlier = seen_time.get(tv)
+            if (earlier and clock.findall(earlier[1]) and clock.findall(cur["time_desc"])
+                    and clock.findall(earlier[1]) != clock.findall(cur["time_desc"])):
+                continue
             if tv in seen_time and seen_time[tv][1] != cur["time_desc"]:
                 issues.append({
                     "level": "WARN", "type": "C5_branch_time_conflict",
@@ -489,6 +495,57 @@ h1{{font-size:20px}} .wrap{{display:flex;flex-direction:column;gap:6px}}
 # CLI
 # =========================================================
 
+# 约定列写了这些词，表示该行的约定/期限已经了结；与 context_manager 的行裁剪口径一致。
+_SETTLED_RE = re.compile(r"已兑现|已结清|已了结|已作废|已取代|已失效|已到期")
+_EMPTY_PROMISE = {"", "无", "-", "—", "–", "/", "N/A", "n/a", "暂无"}
+_ROW_RE = re.compile(r"^\s*\|\s*第\s*(\d+)\s*章\s*\|")
+
+
+def _row_is_open(line):
+    cells = _cells(line)
+    promise = cells[3] if len(cells) > 3 else ""
+    if promise in _EMPTY_PROMISE or _SETTLED_RE.search(promise):
+        return False
+    return promise.split("；")[0].split(";")[0].strip() not in _NONLINEAR_TIME_MARKERS
+
+
+def build_archive_candidate(md_text, through_chapter):
+    """生成卷末归档候选：把第 through_chapter 章及以前的时间行移入「历史记录」分区。
+
+    约定列仍未了结的行不归档，集中到「未完成的约定与期限」分区继续作为硬约束；
+    另写一行「当前时间位置」。只返回候选文本与清单，不写任何文件。
+    """
+    lines = md_text.splitlines()
+    archived, open_rows, kept = [], [], []
+    last_time = ""
+    for line in lines:
+        match = _ROW_RE.match(line)
+        if not match or int(match.group(1)) > through_chapter:
+            kept.append(line)
+            continue
+        cells = _cells(line)
+        last_time = cells[1] if len(cells) > 1 else last_time
+        (open_rows if _row_is_open(line) else archived).append(line)
+    if not archived and not open_rows:
+        return None
+    header = ["| 章节 | 故事内时间 | 事件 | 时间标记/约定 |", "|------|-----------|------|--------------|"]
+    block = ["## 当前时间位置", "", "- 截至第{}章：{}".format(through_chapter, last_time or "未记录"), ""]
+    if open_rows:
+        block += ["## 未完成的约定与期限", "",
+                  "> 这些行的约定列尚未写明了结，归档时保留为硬约束。兑现或作废后在约定列注明「已兑现」「已作废」，下次归档即可移走。",
+                  ""] + header + open_rows + [""]
+    block += ["## 历史记录（第{}章及以前，已归档）".format(through_chapter), "",
+              "> 已了结的历史时间行。写章时默认不加载，需要时按章号或关键词检索本节。", ""] + header + archived + [""]
+    # 归档块放在「机械检查」等说明之前；找不到就追加到末尾。
+    cut = next((i for i, line in enumerate(kept) if line.strip().startswith("## 机械检查")), len(kept))
+    while cut > 0 and kept[cut - 1].strip() in ("", "---"):
+        cut -= 1
+    candidate = kept[:cut] + [""] + block + (["---", ""] + kept[cut:] if cut < len(kept) else [])
+    text = re.sub(r"\n{3,}", "\n\n", "\n".join(candidate)).rstrip("\n") + "\n"
+    return {"text": text, "archived": len(archived), "open": open_rows, "through_chapter": through_chapter}
+
+
+
 def main():
     for stream in (sys.stdout, sys.stderr):
         try:
@@ -496,11 +553,15 @@ def main():
         except (AttributeError, OSError):
             pass
     ap = argparse.ArgumentParser(description="章节时间线管理模块")
-    ap.add_argument("mode", choices=["build", "check", "viz", "anchor", "status"])
+    ap.add_argument("mode", choices=["build", "check", "viz", "anchor", "status", "archive"])
     ap.add_argument("book_dir", help="书籍工程目录")
     ap.add_argument("--chapter", type=int, default=None)
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--html", action="store_true")
+    ap.add_argument("--through-chapter", type=int, default=None,
+                    help="archive：归档到第几章为止（通常是刚写完的一卷的末章）")
+    ap.add_argument("--output", default=None,
+                    help="archive：候选时间线的输出路径，必须在书籍工程之外")
     args = ap.parse_args()
     book_dir = os.path.abspath(args.book_dir)
     if not os.path.isdir(book_dir):
@@ -556,6 +617,31 @@ def main():
                 print("时间锚点：")
                 for aid, a in anchors.items():
                     print(f"  {aid}  {a['label']}  =  {a['time_expr']}")
+        return 0
+
+    if args.mode == "archive":
+        if not args.through_chapter or args.through_chapter < 1 or not args.output:
+            print("错误：archive 需要 --through-chapter N 与 --output 工程外路径", file=sys.stderr)
+            return 2
+        output = os.path.abspath(args.output)
+        try:
+            inside = os.path.commonpath([output, book_dir]) == book_dir
+        except ValueError:  # 不同盘符，必然在工程之外
+            inside = False
+        if inside:
+            print("错误：候选文件必须写在书籍工程之外；确认后在下一章事务的 stage 里替换 追踪/时间线.md", file=sys.stderr)
+            return 2
+        md_text = read_text(os.path.join(book_dir, "追踪", "时间线.md"))
+        candidate = build_archive_candidate(md_text, args.through_chapter)
+        if not candidate:
+            print(f"第{args.through_chapter}章及以前没有可归档的时间行")
+            return 0
+        write_text(output, candidate["text"])
+        print(f"归档候选已写入：{output}（未改动书籍工程）")
+        print(f"  归档 {candidate['archived']} 行；保留未了结的约定 {len(candidate['open'])} 行")
+        for row in candidate["open"]:
+            print("  [未了结] " + row.strip())
+        print("请作者确认上面每条约定确实仍未了结；已兑现的先在约定列注明「已兑现」再重新生成候选。")
         return 0
 
     if args.mode == "status":

@@ -1,9 +1,9 @@
 {
   "chapter": 1,
   "chapter_file": "第001章.md",
-  "chapter_mtime": 1791808470.2932978,
-  "chapter_sha256": "8ff070eb2cedc333f0abbbfc45c80084c9c6a503c3cf59c7e59e4e67ceec2a52",
-  "checked_at": "2026-10-12T08:34:30",
+  "chapter_mtime": 1791826193.7100296,
+  "chapter_sha256": "ef4d622e3bbe5ac31cc6f26c388a4be5a5f4769abd1256abc952431ebebce22f",
+  "checked_at": "2026-10-12T13:29:54",
   "passed": true,
   "blocking": 0,
   "advisory": 2,
@@ -28,6 +28,6 @@
     "fails": 0,
     "warns": 0,
     "declare": "配额 A，事件 crisis，档位 中",
-    "checked_at": "2026-10-12T08:34:31"
+    "checked_at": "2026-10-12T13:29:54"
   }
 }

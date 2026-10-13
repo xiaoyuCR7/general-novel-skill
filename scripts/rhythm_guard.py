@@ -532,6 +532,59 @@ def merge_gate_rhythm(quota_path, chapter_no, passed, fails, warns, decl):
     return path
 
 
+def check_outline_plan(records, plan_dir):
+    """顺序预检一批未写章纲的节奏声明，返回退出码（0 通过 / 1 有违规 / 2 无法读取）。
+
+    只读：不写配额文件。已记录过的章跳过；每一章的声明在内存里计入后续章的冷却与档位纪律，
+    这样一批章纲彼此之间的冷却冲突在交付前就能发现，而不是写到那一章才被拒。
+    """
+    recorded = max([c for c, _, _ in records["quota"]] + [c for c, _, _ in records["events"]]
+                   + [c for c, _ in records["gears"]], default=0)
+    outlines = {}
+    try:
+        names = sorted(os.listdir(plan_dir))
+    except OSError as e:
+        print(f"错误：无法读取章纲目录 {plan_dir}: {e}", file=sys.stderr)
+        return 2
+    for name in names:
+        if not name.endswith(".md") or "章纲" not in name:
+            continue
+        chapter = extract_chapter_number(name)
+        if chapter and chapter > recorded:
+            outlines[chapter] = os.path.join(plan_dir, name)
+    if not outlines:
+        print(f"没有第{recorded}章之后的章纲可预检")
+        return 0
+
+    total_fails = 0
+    for chapter in sorted(outlines):
+        try:
+            with open(outlines[chapter], "r", encoding="utf-8-sig") as f:
+                quota_set, event, gear = _extract_decl_from_text(f.read())
+            fails, warns = run_checks(records, chapter, quota_set, event, gear)
+        except (OSError, ValueError) as e:
+            print(f"第{chapter}章：[FAIL] 无法解析节奏声明：{e}")
+            total_fails += 1
+            continue
+        print(f"第{chapter}章：{_format_decl(quota_set, event, gear)}")
+        for item in fails:
+            print(f"  [FAIL] {item}")
+        for item in warns:
+            print(f"  [WARN] {item}")
+        total_fails += len(fails)
+        records["quota"].append((chapter, "".join(sorted(quota_set)) or "-", ""))
+        if event:
+            records["events"].append((chapter, event, ""))
+        if gear:
+            records["gears"].append((chapter, gear))
+    print()
+    if total_fails:
+        print(f"结果：这批章纲有 {total_fails} 项违规，交付前先调整事件类型、配额或档位")
+        return 1
+    print("结果：这批章纲的节奏声明彼此不冲突")
+    return 0
+
+
 def main():
     for stream in (sys.stdout, sys.stderr):
         try:
@@ -546,6 +599,8 @@ def main():
     ap.add_argument("--declare", default=None,
                     help='预检声明字符串，如 "A,conflict,快" 或 "A,conflict_thrill,快"（写章前检查）')
     ap.add_argument("--chapter", type=int, default=0, help="当前章号（覆盖文件名推断）")
+    ap.add_argument("--plan-dir", default=None,
+                    help="章纲目录：按章号顺序预检尚未写的一批章纲，彼此的冷却冲突在交付前发现（只读）")
     ap.add_argument("--gate-state", action="store_true",
                     help="把节奏检查结果合并写入 追踪/门禁/gate_ch{N}.json 的 rhythm 段")
     # v2.0 新增子命令
@@ -615,8 +670,17 @@ def main():
             return 2
         return 0
 
+    # 批量预检：按章号顺序模拟一批尚未写的章纲，前一章的声明计入后一章的冷却
+    if args.plan_dir:
+        try:
+            records = parse_quota_file(args.quota)
+        except (OSError, ValueError) as e:
+            print(f"错误：无法读取配额文件 {args.quota}: {e}", file=sys.stderr)
+            return 2
+        return check_outline_plan(records, args.plan_dir)
+
     if not args.chapter_file and not args.declare:
-        print("错误：至少需要 --chapter-file 或 --declare 之一", file=sys.stderr)
+        print("错误：至少需要 --chapter-file、--declare 或 --plan-dir 之一", file=sys.stderr)
         return 2
 
     try:
