@@ -27,13 +27,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-latest]
-        python-version: ['3.8', '3.10', '3.12']
+        os: [ubuntu-22.04, ubuntu-24.04, ubuntu-latest]
+        python-version: ['3.8', '3.10', '3.12', '3.14']
+        exclude:
+          # ubuntu-latest 迁到 Ubuntu 26 后没有 Python 3.8 的构建
+          - os: ubuntu-latest
+            python-version: '3.8'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 设置 Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -65,12 +69,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-14, macos-latest]
-        python-version: ['3.9', '3.10', '3.12']
+        python-version: ['3.9', '3.10', '3.12', '3.14']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 设置 Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -102,12 +106,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-2022, windows-latest]
-        python-version: ['3.8', '3.10', '3.12']
+        python-version: ['3.8', '3.10', '3.12', '3.14']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 设置 Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 

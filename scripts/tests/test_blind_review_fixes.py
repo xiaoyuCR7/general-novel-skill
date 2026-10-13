@@ -296,3 +296,70 @@ class TestNarrationAdvisories(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestLinkedParentDirectory(unittest.TestCase):
+    """书籍之上的目录带链接（macOS 的 /var、搬到别的盘的文件夹）不应让书被拒读。"""
+
+    DEMO = SCRIPT_DIR.parent / "demo" / "看见倒计时的骑手"
+
+    def setUp(self):
+        import os
+        import shutil
+        holder = tempfile.TemporaryDirectory()
+        self.addCleanup(holder.cleanup)
+        self.base = Path(os.path.realpath(holder.name))
+        self.book = self.base / "real" / "book"
+        shutil.copytree(str(self.DEMO), str(self.book),
+                        ignore=shutil.ignore_patterns(".chapter-transaction*"))
+        self.alias = self.link(self.base / "alias", self.base / "real")
+
+    def link(self, link, target):
+        import os
+        try:
+            if os.name == "nt":
+                import _winapi
+                _winapi.CreateJunction(str(target), str(link))
+                self.addCleanup(os.rmdir, str(link))
+            else:
+                os.symlink(str(target), str(link), target_is_directory=True)
+                self.addCleanup(os.unlink, str(link))
+        except (OSError, NotImplementedError) as exc:
+            self.skipTest("OS does not permit directory links: " + str(exc))
+        return link
+
+    def test_context_selection_reads_a_book_under_a_linked_parent(self):
+        from context_manager import select_context
+        direct = select_context(self.book, 5)
+        linked = select_context(self.alias / "book", 5)
+        self.assertTrue(direct["ready"], direct.get("missing_required"))
+        self.assertTrue(linked["ready"], linked.get("missing_required"))
+
+    def test_resume_recognises_a_book_under_a_linked_parent(self):
+        import resume
+        report = resume.build_report(str(self.alias / "book"))
+        self.assertEqual(report["project_state"], "native", report["debts"])
+        self.assertEqual(report["last_chapter"],
+                         resume.build_report(str(self.book))["last_chapter"])
+
+    def test_book_root_link_is_still_refused_and_names_the_real_directory(self):
+        import os
+        import resume
+        from context_manager import generate_context_report, select_context
+        root_link = self.link(self.base / "book-link", self.book)
+        report = resume.build_report(str(root_link))
+        self.assertEqual(report["project_state"], "unknown")
+        self.assertIn(os.path.realpath(str(self.book)), " ".join(report["debts"]))
+        context = select_context(root_link, 5)
+        self.assertFalse(context["ready"])
+        self.assertIn(os.path.realpath(str(self.book)), generate_context_report(context))
+
+    def test_materialize_refusal_names_the_resolved_path(self):
+        import os
+        import source_materialize
+        source = self.alias / "book" / "正文" / "第001章.md"
+        with self.assertRaises(ValueError) as caught:
+            source_materialize.copy_source(source, self.base / "copy.md")
+        self.assertIn("link", str(caught.exception))
+        self.assertIn(os.path.realpath(str(source)), str(caught.exception))
+        self.assertFalse((self.base / "copy.md").exists())

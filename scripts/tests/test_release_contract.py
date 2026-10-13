@@ -80,7 +80,7 @@ class TestReleaseContract(unittest.TestCase):
         version_job = workflow.split("  full-test:", 1)[0]
         self.assertRegex(
             version_job,
-            r"uses: actions/setup-python@v5\s+with:\s+python-version: '3\.10'",
+            r"uses: actions/setup-python@v\d+\s+with:\s+python-version: '3\.10'",
         )
 
     def test_release_notes_point_to_the_actual_changelog(self):

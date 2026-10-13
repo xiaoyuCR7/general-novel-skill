@@ -26,7 +26,13 @@ def _safe_path(path):
         except FileNotFoundError:
             continue
         if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & 0x400:
-            raise ValueError("unsafe link/reparse point: " + str(part))
+            message = "unsafe link/reparse point: " + str(part)
+            if part != path:
+                # An ancestor link is often the author's own layout (macOS /tmp
+                # and /var, a relocated folder). Still refused; say how to proceed.
+                message += ("; if this link is part of your own directory layout, "
+                            "pass the resolved path instead: " + os.path.realpath(str(path)))
+            raise ValueError(message)
     return path
 
 

@@ -361,9 +361,14 @@ def _safe_source_path(book_dir: Path, relative: str) -> Path:
         raise ValueError("unsafe_source_path")
     root = Path(book_dir).absolute()
     target = root.joinpath(*parts)
-    # Check ancestors in order before examining children (including book-root
-    # links and Windows junctions). Missing components are handled by the reader.
-    for current in [*reversed(target.parents), target]:
+    # Check the book root and every component inside it, in order (book-root
+    # links and Windows junctions included). Directories above the book root are
+    # the author's own layout (macOS /var, a relocated home, a mounted drive) and
+    # are not this check's business. Missing components are handled by the reader.
+    chain = [root]
+    for part in parts:
+        chain.append(chain[-1] / part)
+    for current in chain:
         try:
             info = current.lstat()
         except FileNotFoundError:
@@ -373,6 +378,14 @@ def _safe_source_path(book_dir: Path, relative: str) -> Path:
         if current != target and not stat.S_ISDIR(info.st_mode):
             raise ValueError("non_directory_source_parent")
     return target
+
+
+def _is_link_path(path) -> bool:
+    try:
+        info = os.lstat(path)
+    except (OSError, TypeError, ValueError):
+        return False
+    return stat.S_ISLNK(info.st_mode) or bool(getattr(info, "st_file_attributes", 0) & 0x400)
 
 
 class _ContextReader:
@@ -1348,6 +1361,9 @@ def generate_context_report(context: Dict[str, Any]) -> str:
     if not context.get("ready", True):
         lines.append("BLOCKED: " + ", ".join(context.get("errors", [])))
         lines.extend("- 缺少：" + path for path in context.get("missing_required", []))
+        if _is_link_path(context.get("book_dir")):
+            lines.append("- 书籍目录本身是链接或目录联接，脚本不跟随；请改传真实目录："
+                         + os.path.realpath(context["book_dir"]))
         lines.append("先补齐必需信息，或提高预算/由作者确认无损摘录；不得直接写章。")
     lines.append(f"\n生成引擎：context_manager.py v{VERSION}")
     lines.append(f"目标章节：第{context['target_chapter']}章")

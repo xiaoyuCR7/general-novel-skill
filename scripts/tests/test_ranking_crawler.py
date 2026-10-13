@@ -26,6 +26,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
+from unittest import mock
 
 # 把 scripts 目录加入 sys.path
 SCRIPT_DIR = Path(__file__).resolve().parent.parent
@@ -58,6 +59,20 @@ from ranking_crawler import (
 )
 
 SCRIPT_PATH = str(SCRIPT_DIR / "ranking_crawler.py")
+
+# 单元测试不得访问真实网络：缓存没命中时宁可当场失败，也不要悄悄去抓三个站点
+# （慢、依赖网络，CI 每个任务都会真的发请求）。
+_NETWORK_GUARD = mock.patch.object(
+    ranking_crawler, "fetch_url",
+    side_effect=AssertionError("单元测试不得访问真实网络"))
+
+
+def setUpModule():
+    _NETWORK_GUARD.start()
+
+
+def tearDownModule():
+    _NETWORK_GUARD.stop()
 
 
 # ---------------------------------------------------------------------------
@@ -797,6 +812,13 @@ class TestCompareLists(unittest.TestCase):
             base_dir=self.tmpdir,
         )
         self.assertIn("hot_title_keywords", result)
+
+    def test_top_n_request_reuses_the_full_list_cache(self):
+        """完整榜单的缓存可以回答 top N 请求，不再发网络请求。"""
+        lst = list(PLATFORMS["fanqie"]["lists"].keys())[0]
+        records, from_cache = ranking_crawler.crawl_list("fanqie", lst, top=2, base_dir=self.tmpdir)
+        self.assertTrue(from_cache)
+        self.assertEqual(len(records), 2)
 
     def test_all_platforms(self):
         """不传 platforms 参数时对比所有平台。"""

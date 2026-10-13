@@ -726,6 +726,9 @@ def crawl_list(platform, list_name, top=None, use_cache=True, base_dir=None):
     # 先查缓存
     if use_cache:
         cached, cache_path = load_cache(platform, list_name, base_dir, top)
+        if not cached and top:
+            # 完整榜单的缓存足以回答任何 top N，不必为此再发一次请求
+            cached, cache_path = load_cache(platform, list_name, base_dir, None)
         if cached:
             if top:
                 return cached[:top], True

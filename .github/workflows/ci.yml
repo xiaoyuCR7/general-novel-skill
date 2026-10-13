@@ -39,16 +39,17 @@ jobs:
   # Job 1: 编译与语法检查
   compile-check:
     name: 编译与语法检查
-    runs-on: ubuntu-latest
+    # 固定 24.04：ubuntu-latest 迁到 Ubuntu 26 后没有 Python 3.8/3.9 的构建
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 设置 Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -69,17 +70,18 @@ jobs:
   # Job 2: 单元测试
   unit-tests:
     name: 单元测试（${{ matrix.python-version }}）
-    runs-on: ubuntu-latest
+    # 固定 24.04：ubuntu-latest 迁到 Ubuntu 26 后没有 Python 3.8/3.9 的构建
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: compile-check
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 设置 Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -104,7 +106,7 @@ jobs:
 
       - name: 上传测试结果（失败时）
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: test-failures-py${{ matrix.python-version }}
           path: scripts/tests/
@@ -117,10 +119,10 @@ jobs:
     timeout-minutes: 5
     needs: compile-check
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 设置 Python 3.10
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -161,7 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: 检查 SKILL.md 契约
         env:

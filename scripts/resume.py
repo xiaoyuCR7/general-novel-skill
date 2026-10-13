@@ -381,14 +381,16 @@ def build_report(book_root):
     report = {"book_root": book_root, "last_chapter": None, "next_chapter": None,
               "debts": [], "notes": [], "project_state": "unknown", "candidates": [], "ready": False}
     root = Path(book_root)
-    for path in (root, *root.parents):
-        try:
-            if _is_link(path.lstat()):
-                report["debts"].append("书籍路径包含链接，未跟随：" + str(path))
-                return report
-        except OSError as exc:
-            report["debts"].append("书籍路径无法检查：" + str(exc))
+    # 只检查书籍目录本身；它之上的目录是作者自己的目录布局（macOS 的 /var、
+    # 搬到别的盘的用户目录等），不属于这里的检查范围。
+    try:
+        if _is_link(root.lstat()):
+            report["debts"].append("书籍目录本身是链接，未跟随：" + str(root)
+                                   + "；请改传真实目录：" + os.path.realpath(book_root))
             return report
+    except OSError as exc:
+        report["debts"].append("书籍路径无法检查：" + str(exc))
+        return report
     from chapter_transaction import pending_transaction, recovery_command, TransactionError
     pending = None
     try:

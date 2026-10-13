@@ -135,8 +135,6 @@ cp assets/agents/*.md {书籍工程根}/.trae/agents/
 
 ```
 general-novel-skill/
-├── .claude-plugin/           # Claude Code 插件与市场清单
-├── commands/                 # 斜杠命令（try/init/write/deslop/review/resume）
 ├── SKILL.md                  # 核心入口：触发条件、工作流总览、Iron Law、题材/平台加载协议
 ├── references/
 │   ├── workflow/             # 工作流（当前 30 个，含无工程试写的 quick-start.md）

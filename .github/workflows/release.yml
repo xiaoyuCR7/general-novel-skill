@@ -15,9 +15,9 @@ jobs:
     name: 版本号一致性验证
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -37,9 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: version-check
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: full-test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -73,7 +73,7 @@ jobs:
           echo "changes=请查看 [CHANGELOG.md 对应版本](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md)。" >> $GITHUB_OUTPUT
 
       - name: 创建 Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: general-novel-skill ${{ github.ref_name }}
           body: |
