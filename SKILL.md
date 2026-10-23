@@ -102,6 +102,13 @@ required 信息必须无损保留；缺失/不可读或预算装不下则停止�
    进程中断则先 recover。多文件不是单次原子替换，未完成 journal 必须阻断恢复写作与下一章。
 6. validate 仅验证机器门禁/追踪/哈希；主 Agent 真实语义自查后才可 commit --self-review-confirmed。
 
+## Short story
+
+- 短篇（约 4000–30000 字）走 `references/workflow/short-story-loop.md`：不建追踪五表，不走章事务与 `resume.py`；
+  授权来源是 `大纲/小节大纲.md`，无小节大纲不写正文。ending_mode 视为 closed，不加下章钩子。
+- 门禁为 `check_text.py` 的字数与机器闸口，加反转有铺垫、结尾不升华、字数在平台区间三项人工自查。
+- 只要大纲时，交付情绪、平台、人物速写与小节大纲后停止；交付全文时标明门禁状态与未决项。
+
 ## Failure and recovery
 
 | Code | Meaning | Required response |

@@ -2,6 +2,7 @@
 
 ## Unreleased (2026-10-12)
 
+- `SKILL.md` 新增短篇一节：短篇不建追踪五表、不走章事务与 `resume.py`，以小节大纲为授权，并写明门禁与停止点。导入旧稿的长短篇判定统一按总字数（< 3 万字为短篇），`import-book.md` 不再按单章均长判断。
 - `SKILL.md` 的触发描述改为中文，补齐短篇、导入旧稿、拆文仿写、扫榜等场景；`skill_contract.py` 接受以「用于」开头的中文描述。
 - 书籍之上的目录带链接时不再误报：`context_manager.py` 与 `resume.py` 只检查书籍目录本身及其内部，不再检查它之上的各级目录（macOS 的 `/tmp`、`/var`，搬到别的盘的文件夹）；书籍目录本身是链接时仍拒绝，并给出应改传的真实目录。`source_materialize.py` 保持拒绝上级链接，拒绝信息里附解析后的路径。
 - CI：Python 3.8/3.9 的任务固定到 `ubuntu-24.04`（`ubuntu-latest` 迁到 Ubuntu 26 后没有这两个版本的构建）；矩阵加入 3.13、3.14；Actions 升到 Node 24 版本。
