@@ -38,6 +38,22 @@ class TestSkillContract(unittest.TestCase):
 
         self.assertEqual(report.errors, ["unsupported_frontmatter:activation"])
 
+    def test_description_must_say_when_to_use_in_english_or_chinese(self):
+        cases = {
+            "Use when checking a demo skill.": [],
+            "用于检查示例 skill。当用户要审核时使用。": [],
+            "A demo skill.": ["invalid_description"],
+            "示例 skill，用于检查。": ["invalid_description"],
+        }
+        for description, expected in cases.items():
+            with self.subTest(description=description), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "demo-skill"
+                self._write_skill(
+                    root,
+                    "---\nname: demo-skill\ndescription: " + description + "\n---\nBody.\n",
+                )
+                self.assertEqual(audit_skill(root).errors, expected)
+
     def test_reports_missing_explicit_local_paths(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "demo-skill"

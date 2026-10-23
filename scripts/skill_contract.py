@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 
 ALLOWED_FRONTMATTER = {"name", "description", "license", "metadata", "allowed-tools"}
+DESCRIPTION_PREFIXES = ("Use when", "用于")
 CRITICAL_ROUTES = {
     "references/workflow/" + name + ".md" for name in (
         "task-router", "book-init", "outline-system", "chapter-loop", "daily-failfast",
@@ -452,7 +453,8 @@ def audit_skill(root: Path) -> AuditReport:
         errors.append("name_mismatch:" + logical_folder)
 
     description = frontmatter.get("description")
-    if not isinstance(description, str) or not description.startswith("Use when"):
+    # A description states when to use the skill: "Use when ..." or Chinese "用于 ...".
+    if not isinstance(description, str) or not description.startswith(DESCRIPTION_PREFIXES):
         errors.append("invalid_description")
 
     errors.extend(_audit_reachable(root))
