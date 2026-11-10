@@ -5,6 +5,10 @@
 利用 config.py 的 load_llm_config() 调用 8 种 LLM provider 生成章节正文。
 provider="default" 时为 pass-through 模式：输出 system prompt + context 供 AI 客户端消费。
 
+实验性脚本：不属于 SKILL.md 的任何工作流，也不走章事务（不建 stage、不过门禁、不更新追踪）。
+它的输出只是候选草稿，不是已入库正文；要入库仍须按 references/workflow/chapter-loop.md
+走 prepare → validate → commit。
+
 用法:
   python scripts/llm_writer.py write "{书名目录}" --chapter N
   python scripts/llm_writer.py write "{书名目录}" --chapter N --dry-run

@@ -365,7 +365,7 @@ def _generate_cursor_rules(plugin_dir: Path, skill_root: Path):
     skill_content = common.read_text(skill_md_src) if skill_md_src.exists() else ""
 
     # 提取关键指令生成.cursorrules
-    cursor_rules = f"""# Long Novel Skill — Cursor Rules
+    cursor_rules = f"""# General Novel Skill — Cursor Rules
 
 ## 角色
 你是资深AI Agent工程师和金牌小说创作者，精通长篇网络小说的工业化创作。

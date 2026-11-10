@@ -8,6 +8,14 @@
 的关系：本文档是**产出规格层**——定义「拆完之后产出的文件长什么样、放在哪里、
 怎么用」。`deconstruct.md` 和 `deconstruct-pipeline.md` 是**流程层**——定义「怎么拆」。
 
+## 目录
+
+- 1. 产出目录结构
+- 2. 各产出文件的内容规范
+- 3. 拆文产出消费规则
+- 4. 与 deconstruct.py 的集成
+- 拆文产出纪律
+
 ## 1. 产出目录结构
 
 ```
@@ -583,7 +591,7 @@
 ```
 
 **消费方**：
-- `outline-system.md`：做大纲时可读取 `_meta.json` 快速获取对标书的结构特征数据。
+- `outline-system.md`：做大纲时可读取 `对标/{书名}/_meta.json` 快速获取对标书的结构特征数据。
 - `deconstruct.py`：脚本升级后应自动生成此文件。
 - `style_fingerprint.py`：`compare` 子命令可读取此文件中的 `five_dim_scores` 和
   `thrill_density` 做跨书对比。
@@ -615,7 +623,7 @@
 
 **可选读取**：
 - `设定/` 目录下的文件（需要世界观结构参考时）
-- `_meta.json`（需要量化数据做跨书对比时）
+- `对标/{书名}/_meta.json`（需要量化数据做跨书对比时）
 
 ### 3.3 写正文阶段
 
@@ -655,24 +663,32 @@
 当前 `deconstruct.py` 产出为扁平结构（量化统计/结构分析/节奏分析/文风指纹各一个文件），
 需要升级为分目录结构化产出，与 `deconstruct-pipeline.md` 七阶段管道对齐。
 
+**状态：本节是升级提案，尚未实现。** 脚本目前只有 `stats`、`structure`、`rhythm`、`fingerprint`
+四个子命令；下文的 `init`、`meta`、`fingerprint-json` 以及默认输出路径的改动都不可执行。
+在实现之前，分目录结构和元数据文件由 Agent 按第 1–2 节的规范手工创建与填写，不得声称已由脚本生成。
+
 ### 4.1 当前产出 vs 目标产出
 
 | 当前子命令 | 当前产出 | 目标产出路径 | 升级动作 |
 |---|---|---|---|
-| `stats` | `量化统计.md` | `拆文报告.md` + `_meta.json` | 合并到报告，量化数据写入 _meta |
-| `structure` | `结构分析.md` | `章节/第N章_摘要.md` + `_meta.json` | 逐章产出，结构计数写入 _meta |
-| `rhythm` | `节奏分析.md` | `剧情/节奏.md` + `_meta.json` | 档位分布写入 _meta |
+| `stats` | `量化统计.md` | `拆文报告.md` + `对标/{书名}/_meta.json` | 合并到报告，量化数据写入 _meta |
+| `structure` | `结构分析.md` | `章节/第N章_摘要.md` + `对标/{书名}/_meta.json` | 逐章产出，结构计数写入 _meta |
+| `rhythm` | `节奏分析.md` | `剧情/节奏.md` + `对标/{书名}/_meta.json` | 档位分布写入 _meta |
 | `fingerprint` | `文风指纹.md` | `文风指纹.json` + `文风.md` | 新增 JSON 输出格式，MD 产出遵循 style-profile 协议 |
 
 ### 4.2 升级方案
 
 #### 新增子命令：`init`
 
-`python scripts/deconstruct.py init "对标/{书名}" --title "{书名}"`
+接口提案（未实现）：
+
+```text
+python scripts/deconstruct.py init "对标/{书名}" --title "{书名}"
+```
 
 功能：创建分目录结构。
 
-```bash
+```text
 # 自动创建以下目录和占位文件
 对标/{书名}/
 ├── 角色/
@@ -687,15 +703,23 @@
 
 #### 新增子命令：`meta`
 
-`python scripts/deconstruct.py meta "对标/{书名}" --output "对标/{书名}/_meta.json"`
+接口提案（未实现）：
 
-功能：聚合所有已有分析结果，生成/更新 `_meta.json`。从 `stats`/`structure`/
+```text
+python scripts/deconstruct.py meta "对标/{书名}" --output "对标/{书名}/_meta.json"
+```
+
+功能：聚合所有已有分析结果，生成/更新 `对标/{书名}/_meta.json`。从 `stats`/`structure`/
 `rhythm` 的中间数据中提取结构计数、五维评分、档位分布、角色分级等，写入 JSON。
 
 #### 新增子命令：`fingerprint-json`
 
-`python scripts/deconstruct.py fingerprint-json "对标/{书名}/原文/第1章.md" ... \
-  --output "对标/{书名}/文风指纹.json"`
+接口提案（未实现）：
+
+```text
+python scripts/deconstruct.py fingerprint-json "对标/{书名}/原文/第1章.md" ... \
+  --output "对标/{书名}/文风指纹.json"
+```
 
 功能：在现有 `fingerprint` 子命令基础上，额外输出 JSON 格式的文风指纹，
 供 `style_fingerprint.py compare` 直接消费。
@@ -740,7 +764,7 @@ Stage 6:  脚本 → 文风指纹.json + 文风.md（六维量化）
 | P0 | `fingerprint` 支持 JSON 输出 | `style_fingerprint.py compare` 需要机器可读格式 |
 | P1 | `stats` 产出集成到拆文报告 | 消除冗余文件 |
 | P1 | `structure` 逐章产出 | 与 pipeline Stage 2 逐章摘要对齐 |
-| P1 | 新增 `meta` 子命令 | `_meta.json` 是工具消费的核心 |
+| P1 | 新增 `meta` 子命令 | `对标/{书名}/_meta.json` 是工具消费的核心 |
 | P2 | `rhythm` 输出路径规范化 | 低风险改进 |
 | P2 | 默认路径自动路由 | 向后兼容基础上提供便利 |
 
@@ -750,5 +774,5 @@ Stage 6:  脚本 → 文风指纹.json + 文风.md（六维量化）
 - 绝不照搬人物名、地名、情节。产出只供本书参考，不外传对标书原文。
 - 每个文件有硬上限：`拆文报告.md` ~2000 字，`文风.md` ~4000 字，角色卡 ~800 字，
   逐章摘要按密度标准。超限 = 检索成本过高，写作时懒得读。
-- `_meta.json` 在每次拆文阶段完成后更新，保持数据与产出文件同步。
+- `对标/{书名}/_meta.json` 在每次拆文阶段完成后更新，保持数据与产出文件同步。
 - 中断后从 `对标/{书名}/_progress.md` 恢复，不凭记忆续跑——进度状态以文件为准。

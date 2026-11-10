@@ -6,6 +6,19 @@ SendMessage/TeamDelete 生命周期管理、防死循环、降级协议、状态
 `references/craft/editorial-team.md`。**本文档只管「怎么把这四个 Agent 编排跑起来」，
 不管角色本身怎么定义。**
 
+## 目录
+
+- 何时用这个
+- 与现有文档的关系
+- 8 步 Spawn 协议
+- SendMessage / TeamDelete 生命周期管理
+- 防死循环机制
+- 降级协议
+- 状态持久化
+- 与 chapter-loop.md 的衔接
+- 与 assets/agents/README.md 的关系
+- 团队纪律
+
 ## 何时用这个
 
 - 卷末大高潮章 / 关键转折反转章 / 上架签约前的重要章节。

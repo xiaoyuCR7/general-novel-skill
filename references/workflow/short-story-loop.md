@@ -73,8 +73,11 @@
 ## Step 6：精修
 
 ```bash
-python scripts/check_text.py "正文/正文.md" --min-chars 4000 --max-chars 30000 --gate-report
+python scripts/check_text.py "正文/正文.md" --min-chars {平台下限} --max-chars {平台上限} --gate-report
 ```
+
+`{平台下限}` 与 `{平台上限}` 取文末「平台适配」里目标平台的区间（如知乎盐言 8000 与 20000），
+不用 4000–30000 的总范围代替；平台未定时先回 Step 1 定平台。
 
 跑完机器闸口后人工检查三项（短篇特有）：
 

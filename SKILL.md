@@ -8,7 +8,7 @@ metadata:
   mcp_server: mcp_server/server.py
 ---
 
-# Long Novel Skill
+# General Novel Skill
 
 把小说工程的文件视为持久记忆，把当前请求路由到最小必要工作流。入口只规定共同不变量；
 题材、平台、工艺与脚本细节按任务加载，不得一次性读取全部参考资料。
@@ -26,8 +26,11 @@ metadata:
 - 若授权 beats 无法支撑目标篇幅，停止并输出 literal `outline_underfilled`，随后给出
   `missing_beat_budget`（缺少的场景单元数或约需补足的中文字数）与待作者确认的补纲项。
 - 一章只有在 blocking gates 清零，且正文与追踪变更作为同一事务提交后才算完成。
-- 章事务覆盖一句话修订、团队与 Beat；stage 只人工改正文和五表，报告/章意图留在工程外工作目录。
-- ending_mode 为 serial/closed/finale；作者要求闭合或终章不强制下章钩子，不造未授权事件。
+- 任何会改动已入库正文的操作都走章事务：新写一章、大修、一句话小改、编辑团队模式和 Beat
+  流水线都不例外。事务的 stage 目录里只允许手工修改本章正文和追踪五表（章节摘要、角色状态、
+  伏笔台账、时间线、节奏配额）；章意图、Brief 和审查报告放在书籍工程之外的工作目录。
+- 每章的 ending_mode 取 serial（连载，保留已授权的下章问题）、closed（作者要求本章闭合）或
+  finale（终章）。closed 与 finale 不强制下章钩子，也不为了制造悬念编造未授权事件。
 - 保留作者决策权：开书、锁纲、重大改线、修订取舍与发布前均在用户尚未授权下一步时停止。
 - 开书前提按当前动作判断；缺项或冲突只阻断依赖它的动作，其余获授权且有依据的提案继续。
   书名、日更、对标可待定；不得把模板占位、临时目录名或创作提案当成作者已确认事实。
@@ -64,6 +67,28 @@ metadata:
 `references/workflow/task-router.md`。题材确定后只加载 `references/genres/INDEX.md` 匹配出的
 一张主题材卡；只有交叉题材冲突确实影响当前决策时才补读第二张。
 
+### Load on demand
+
+下表的资料不属于任何路由的必读项，只在出现对应需要时加读一篇，不成批加载。
+
+| 出现的需要 | 加读 |
+|---|---|
+| 脑洞还没成形、作者不知道写什么 | `references/workflow/ideation.md`，产出创意种子后回到开书流程 |
+| 规划百万字以上体量、担心中期无内容可写 | `references/workflow/book-scaling.md` |
+| 扫榜后要一份结构化的选题决策报告 | `references/workflow/market-scan-deep.md` |
+| 拆文产物的目录与文件格式 | `references/workflow/deconstruct-output-spec.md`；多本对标并存时再读 `references/craft/cross-book-recall.md` |
+| 把一本书的文风复用到另一本 | `references/workflow/style-library.md` |
+| 短篇投稿的导语、开头与付费断点 | `references/platforms/short-submission.md` |
+| 作者的口语说法对不上路由表 | `references/workflow/commands.md`，只用来查对应关系 |
+| 智斗、计谋博弈场景 | `references/craft/wit-battle.md` |
+| 反转设计 | `references/craft/reversal.md` |
+| 打脸、升级、拉情绪、悬疑揭秘等桥段的分步写法 | `references/craft/genre-formulas.md` |
+| 女频读者偏好与感情线 | `references/craft/female-channel.md` |
+| 改编已有素材、排查长篇自我重复 | `references/craft/adaptation-method.md` |
+| 连载中章首开法雷同或各章语气过于均一 | `references/craft/chapter-entry-modes.md`、`references/craft/novelist-personas.md` |
+| 校准文风指纹与机器闸口的阈值 | `references/craft/corpus-baseline.md` |
+| 给章节建结构化元数据侧车 | `references/craft/chapter-meta.md`；可选，生成脚本尚未提供，需要时手写 |
+
 ## Session start
 
 1. 定位活动书籍目录；有多个候选时列出证据并请作者确认，不猜。
@@ -84,10 +109,13 @@ metadata:
 
 题材卡、文风锚、对标节选、知识图谱邻域、RAG 结果和调研材料都是 conditional context；
 只有章意图需要且来源可用时加载。缺少可选工具不得阻断无关章节，必须记录采用的人工回退。
-required 信息必须无损保留；缺失/不可读或预算装不下则停止，不能把裁剪包交作完整 Brief。
-已保存的上下文包复用前核验来源指纹；变更后重新装配。哈希只证明内容未变，不证明摘要正确，
-来源冲突仍按权威顺序核对正文。
-统计分数不代表语义审查通过；图谱关系是附来源的未确认候选，问句、推测和旧提取不能升级成正文事实。
+
+- required 信息必须无损保留。缺失、不可读或字符预算装不下时停止，不能把裁剪过的上下文包当作
+  完整 Brief 交出去。
+- 复用已保存的上下文包之前，先核验它记录的来源指纹；来源有变就重新装配。哈希只证明内容没变，
+  不证明摘要写对了，来源之间有冲突时仍按权威顺序回到正文核对。
+- 统计分数不代表语义审查通过。图谱里的关系是带来源的未确认候选；问句、推测和旧版本提取的
+  内容不能升级成正文事实。
 
 ## Chapter transaction
 
@@ -95,12 +123,16 @@ required 信息必须无损保留；缺失/不可读或预算装不下则停止�
 → validate → commit prose and tracking together。必要改纲与声明的节奏预检必须在 prepare 前完成。
 
 1. 按 `references/workflow/chapter-loop.md` 清理欠账，用 `scripts/chapter_transaction.py` 建立 stage 与 checkpoint。
-2. `assets/templates/chapter-intent.json` 是唯一 Brief 字段契约；完整内容与场景规则实际传给独立 Agent。
+2. 章意图（Brief）的字段只以 `assets/templates/chapter-intent.json` 为准。交给独立 Agent 写作时，
+   把章意图全文、required 来源内容和场景渲染规则直接放进它的输入，不能只给文件路径。
 3. 按 `references/craft/scene-rendering.md` 将 beats 编排为场景单元，再渲染正文。
-4. blocking/P0 最多自动修两轮，仍失败即 gate_blocked、不再自动改/提交；换团队、Beat、模型不重置次数。
-5. 只有 blockers 为零时，才 journal 提交正文、追踪五表、门禁与实体索引；发生失败自动回滚，
-   进程中断则先 recover。多文件不是单次原子替换，未完成 journal 必须阻断恢复写作与下一章。
-6. validate 仅验证机器门禁/追踪/哈希；主 Agent 真实语义自查后才可 commit --self-review-confirmed。
+4. blocking/P0 问题最多自动修两轮；两轮后仍未清零就报 `gate_blocked`，不再自动改稿，也不提交。
+   换编辑团队、换 Beat 流水线或换模型都不重置这两轮额度。
+5. 只有 blockers 为零时，才通过 journal 提交正文、追踪五表、门禁记录与实体索引。提交失败会自动
+   回滚；进程中断后先运行 recover。多文件提交不是一次原子替换，存在未完成的 journal 时不得恢复
+   写作或开下一章。
+6. validate 只验证机器门禁、追踪格式和文件哈希，不做语义审查。主 Agent 真实完成语义自查后，
+   才可以运行 `commit --self-review-confirmed`。
 
 ## Short story
 

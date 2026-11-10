@@ -67,6 +67,13 @@ A 不必然是快档：主线发生不可逆改变但尚未到大结算的章，
 - 每 5 章必须至少出现一次 `bond_deepening` 或 `world_painting`
 - 连续 3 章无 `bond_deepening` → 报 WARN
 
+## 可选信号：速决检测脚本
+
+`scripts/anti_resolution_guard.py` 可对单章做只读的速决倾向扫描（`check`），并提供冷却期
+（`cooling`）、钩子充足度（`hooks`）和全书趋势（`report`）三个子命令。它的结果是工艺复核信号，
+不是章事务的 blocking 门禁：命中后由主 Agent 对照章意图判断改留。ending_mode 为 closed 或
+finale 的章不适用钩子充足度与问题增量检查，终局卷加 `--final-volume`。
+
 ## 章末强制自检
 
 写前用现有章意图确认，写后在工程外语义/自查报告核对；不在 stage 修改章纲：
