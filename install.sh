@@ -98,13 +98,22 @@ install_skill() {
         return 1
     fi
 
-    # 复制skill文件
-    # 排除不需要的文件（mcp_server 一并复制，MCP 需另行 pip install mcp）
-    rsync -av --exclude='__pycache__' \
-              --exclude='*.pyc' \
-              --exclude='.git' \
-              "$SCRIPT_DIR/" "$target/" 2>/dev/null || \
-    cp -R "$SCRIPT_DIR" "$target"
+    # 强制覆盖时先清掉旧安装，避免旧版本文件残留
+    if [ -d "$target" ]; then
+        rm -rf "$target"
+    fi
+    mkdir -p "$target"
+
+    # 只复制运行 skill 需要的内容（白名单）。仓库里的 .git、.github、.worktrees、
+    # 缓存目录、demo 与本地文档都不进入安装目录。mcp_server 一并复制，MCP 需另行 pip install mcp。
+    local item
+    for item in SKILL.md skill.json LICENSE novel-cli.py references scripts assets mcp_server evals; do
+        if [ -e "$SCRIPT_DIR/$item" ]; then
+            cp -R "$SCRIPT_DIR/$item" "$target/"
+        fi
+    done
+    find "$target" \( -name '__pycache__' -o -name '.pytest_cache' \) -type d -prune -exec rm -rf {} +
+    find "$target" -name '*.pyc' -type f -delete
 
     # 创建 .trae/agents 目录（如果工具是trae且存在agents）
     if [ "$tool" = "trae" ] && [ -d "$SCRIPT_DIR/assets/agents" ]; then

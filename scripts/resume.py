@@ -157,6 +157,7 @@ def check_next_outline(book_root, next_no):
 
 MANUSCRIPT_DIRS = {"正文", "manuscript", "chapters", "drafts", "旧稿", "原稿"}
 METADATA_DIRS = {"设定", "大纲", "追踪", "对标", "参考资料"}
+SCHEDULER_STATE_DIRS = {".editorial", ".auto-write"}
 MAX_SCAN_ENTRIES = 2000
 TRACKING_FILES = {"章节摘要.md", "角色状态.md", "伏笔台账.md", "时间线.md", "节奏配额.md",
                   "entity_index.json", ".flow_lock.json", ".chapter-transaction.lock"}
@@ -348,6 +349,8 @@ def _discover(book_root):
             elif stat.S_ISDIR(info.st_mode):
                 if relative == "追踪/.chapter-transactions":
                     continue  # pending_transaction checks the journal separately.
+                if mode == "root" and path.name in SCHEDULER_STATE_DIRS:
+                    continue  # 编辑团队/托管的调度状态：隐藏目录，不属于故事资料，也不进事务快照。
                 if mode == "root":
                     if path.name in MANUSCRIPT_DIRS:
                         scan(path, "prose")

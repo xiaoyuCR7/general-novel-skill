@@ -77,12 +77,20 @@ function Install-Skill {
     }
 
     # 复制skill文件（排除不需要的文件；mcp_server 一并复制，MCP 需另行 pip install mcp）
-    $exclude = @('__pycache__', '*.pyc', '.git')
-    Copy-Item -Recurse -Path $ScriptDir -Destination $target -Force
+    # 只复制运行 skill 需要的内容（白名单）。仓库里的 .git、.github、.worktrees、
+    # 缓存目录、demo 与本地文档都不进入安装目录。
+    New-Item -ItemType Directory -Force -Path $target | Out-Null
+    $include = @('SKILL.md', 'skill.json', 'LICENSE', 'novel-cli.py', 'references', 'scripts', 'assets', 'mcp_server', 'evals')
+    foreach ($item in $include) {
+        $source = Join-Path $ScriptDir $item
+        if (Test-Path $source) {
+            Copy-Item -Recurse -Path $source -Destination $target -Force
+        }
+    }
 
-    # 清理排除文件
-    foreach ($pattern in $exclude) {
-        Get-ChildItem -Recurse -Path $target -Filter $pattern | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    # 清理缓存（-Force 才能列出隐藏项）
+    foreach ($pattern in @('__pycache__', '.pytest_cache', '*.pyc')) {
+        Get-ChildItem -Recurse -Force -Path $target -Filter $pattern | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     Write-Info "✓ 成功安装到 $Tool"

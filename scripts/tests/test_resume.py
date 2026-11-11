@@ -175,6 +175,16 @@ class TestResume(unittest.TestCase):
             self.assertTrue(report["debts"] or report["notes"])
             path.unlink()
 
+    def test_scheduler_state_dirs_are_not_story_material(self):
+        baseline = self.report()["project_state"]
+        self.write(".editorial/editorial_state.json", b"{}")
+        self.write(".auto-write/state.json", b"{}")
+        report = self.report()
+        self.assertEqual(report["project_state"], baseline)
+        mentions = [text for text in report["debts"] + report.get("notes", [])
+                    if ".editorial" in text or ".auto-write" in text]
+        self.assertEqual(mentions, [])
+
     def test_journal_overrides_native_and_external_before_other_debts(self):
         for variant in ("empty", "external", "native"):
             with self.subTest(variant=variant):

@@ -139,6 +139,8 @@ general-novel-skill/
 ├── references/
 │   ├── workflow/             # 工作流（当前 30 个，含无工程试写的 quick-start.md）
 │   │   ├── book-init.md          # 开书流程（长篇，对接 init_book.py）
+│   │   ├── task-router.md        # 任务路由与上下文装配（多意图拆解、改纲协议、外稿恢复）
+│   │   ├── quick-start.md        # 无工程试写（五个问题 → 迷你章纲 → 草稿）
 │   │   ├── chapter-loop.md       # 单章写作循环
 │   │   ├── outline-system.md     # 三级大纲 + 大纲锚点配额
 │   │   ├── short-story-loop.md   # 短篇写作循环（五段式）
@@ -161,6 +163,10 @@ general-novel-skill/
 │   │   ├── style-library.md      # 风格库跨书复用
 │   │   ├── commands.md           # 命令入口表（30个命令+新手/高级分层）
 │   │   ├── revision.md           # 大修流程
+│   │   ├── publishing-pack.md    # 简介、标签、封面等上架物料
+│   │   ├── author-preferences.md # 作者偏好的记录、更正与遗忘
+│   │   ├── evidence-review.md    # 统计分数、图谱证据与评测的判读
+│   │   ├── dashboard-workbench.md  # Dashboard 工作台的浏览与编辑
 │   │   └── book-scaling.md       # 百万字结构展开
 │   ├── craft/                # 通用写作工艺（当前 50 个）
 │   │   ├── iron-law.md           # 七条铁律
@@ -202,8 +208,7 @@ general-novel-skill/
 ├── assets/
 │   ├── templates/            # 书籍工程模板（20 个）
 │   ├── agents/               # 编辑团队可部署资产（4 个角色 + README）
-│   └── style_library/        # 风格库（跨书复用）
-│       └── index.json         # 风格库索引
+│   └── style_library/        # 风格库（跨书复用；首次导入风格时才生成，仓库里没有）
 └── scripts/                  # 机械闸口、量化与验证工具（纯标准库，共 47 个）
     ├── common.py                 # 共享工具函数（文件I/O+文本处理+章节解析）
     ├── config.py                 # 全局配置常量（目录结构+文件名+BM25参数）
@@ -216,6 +221,7 @@ general-novel-skill/
     ├── normalize_punct.py        # 标点归一化
     ├── init_book.py              # 一键初始化书籍工程骨架
     ├── resume.py                 # 会话恢复报告（欠账门机器查验）
+    ├── chapter_transaction.py    # 章事务（prepare/validate/commit/recover，正文与追踪五表一起入库）
     ├── validate_tracking.py      # 追踪文件格式校验
     ├── tracking_delta.py         # 写后事实增量：追踪变更逐条核对正文出处 + 生成章节摘要条目
     ├── outline_anchor.py         # 大纲锚点动态约束注入 + 配额兼容检查
@@ -232,6 +238,12 @@ general-novel-skill/
     ├── editorial_manager.py      # 编辑团队状态管理器（snapshot/record-review/status/need-human）
     ├── hooks.py                  # 自动化Hook机制（5个Hook）
     ├── rag_retriever.py          # RAG检索增强（build/query/status）
+    ├── author_preferences.py     # 作者偏好存取
+    ├── entry_mode.py             # 章节入口模式推荐
+    ├── anti_resolution_guard.py  # 速决倾向只读扫描（复核信号，不是门禁）
+    ├── ranking_crawler.py        # 榜单采集（需联网）
+    ├── skill_contract.py         # Skill 契约检查（引用可达、命令参数、入口约束）
+    ├── skill_eval.py             # Skill 评测案例校验
     └── tests/                    # 默认全量测试套件（收集数见 skill.json）
         ├── run_tests.py              # 测试运行器
         ├── test_common.py            # common.py（36）

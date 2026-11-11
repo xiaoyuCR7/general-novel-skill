@@ -70,11 +70,27 @@ def _write_json(path, data):
         f.write("\n")
 
 
+EDITORIAL_DIR = ".editorial"
+
+
 def _ensure_editorial_dir(book_root):
-    """确保 追踪/editorial/ 目录存在，返回路径。"""
-    d = os.path.join(book_root, "追踪", "editorial")
+    """确保 {book}/.editorial/ 目录存在，返回路径。
+
+    章事务 commit 时比对整本书所有非隐藏文件的哈希；团队状态若写进 追踪/，
+    prepare 之后的任何一次写入都会被判为 state_conflict。隐藏目录不计入快照。
+    """
+    d = os.path.join(book_root, EDITORIAL_DIR)
     os.makedirs(d, exist_ok=True)
     return d
+
+
+def _editorial_read_dir(book_root):
+    """读取用目录：优先新位置；旧工程只有 追踪/editorial/ 时回退读取，不迁移、不写入。"""
+    current = os.path.join(book_root, EDITORIAL_DIR)
+    legacy = os.path.join(book_root, "追踪", "editorial")
+    if not os.path.isdir(current) and os.path.isdir(legacy):
+        return legacy
+    return current
 
 
 def find_last_chapter(book_root):
@@ -206,7 +222,7 @@ def _get_rhythm_violations(book_root):
 # ── 子命令：snapshot ──────────────────────────────────────────────────────
 
 def cmd_snapshot(book_root, chapter_no):
-    """生成上下文快照，输出到 追踪/editorial/snapshot_ch{N}.json。"""
+    """生成上下文快照，输出到 {book}/.editorial/snapshot_ch{N}.json。"""
     # 查找最新章节文件
     chapter_file = find_chapter_file(book_root, chapter_no)
     if chapter_file is None:
@@ -264,7 +280,7 @@ VALID_VERDICTS = ("pass", "conditional", "rewrite")
 
 
 def cmd_record_review(book_root, args):
-    """记录审核结果，追加到 追踪/editorial/review_history.json。"""
+    """记录审核结果，追加到 {book}/.editorial/review_history.json。"""
     if args.stage not in VALID_STAGES:
         print(f"错误：--stage 须为 {VALID_STAGES} 之一，收到：{args.stage}", file=sys.stderr)
         return 2
@@ -315,7 +331,7 @@ def cmd_record_review(book_root, args):
 
 def cmd_status(book_root, last_n):
     """查看最近 N 章的审核历史，输出表格格式状态报告。"""
-    out_dir = os.path.join(book_root, "追踪", "editorial")
+    out_dir = _editorial_read_dir(book_root)
     history_path = os.path.join(out_dir, "review_history.json")
     history = _read_json(history_path)
     if not history or "reviews" not in history or not history["reviews"]:
@@ -403,7 +419,7 @@ def cmd_status(book_root, last_n):
 def cmd_need_human(book_root):
     """检测是否需要人工介入，输出 JSON 判定结果。"""
     reasons = []
-    out_dir = os.path.join(book_root, "追踪", "editorial")
+    out_dir = _editorial_read_dir(book_root)
     history_path = os.path.join(out_dir, "review_history.json")
     history = _read_json(history_path)
 

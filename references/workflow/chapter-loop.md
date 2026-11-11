@@ -238,8 +238,10 @@ blocking 项则输出 `gate_blocked`，保留 checkpoint 与 pending draft，can
 字数按正文计，不含章节标题行；目标区间留出约 2% 余量，不贴着上限交稿。
 - `normalize_punct.py --check`：只看不改；有功能的破折号、省略号、语气标点保持原样。
   不跑默认批量归一化，不为去符号强添动作。确需修正时只改 stage 正文，再重跑门禁。
-- `check_text.py --gate-report`：查七类（字数、Gate A 禁用词含白名单、Gate B 毒句式、
-  Gate C 心理告知、Gate F 结尾升华、退化检测、AI 味量化打分）+ 伏笔超期。
+- `check_text.py --gate-report`：7 Gate 指 `anti-ai-style.md` 的 A 禁用词、B 毒句式、C 心理告知、
+  D 句群节奏、E 人物声线、F 结尾升华、G 解释腔。脚本能机查的是 A（含白名单）、B、C（候选，需人工
+  确认）、F、G（连同工程词泄漏、预告式收尾）；D 与 E 没有机器门禁，由密度、结构和段落级 AI 模式
+  三组 advisory 提示配合人工判断。同一条命令还查字数和伏笔超期。
 - `rhythm_guard.py`：查 A/B/C 配额是否越界、事件冷却是否违规、连续快档、慢档缺失。
 - `style_fingerprint.py compare`：查六维文风指标是否偏离文风锚容差。
   偏离要对照作者认可样段与场景功能，连续三次提示也不强改。extract 只写工程外独立指纹，

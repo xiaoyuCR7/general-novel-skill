@@ -73,7 +73,7 @@ python scripts/resume.py "{书名}" --json
 - 追踪文件未同步 → 补回写五文件 + `validate_tracking.py`。
 - 伏笔 🔴 超期 → 先处理超期伏笔（回收/延期/废弃），再开新章。
 
-**快照落盘**：快照 JSON 写入 `追踪/editorial_state.json` 的 `snapshot` 字段，供后续步骤引用。
+**快照落盘**：快照 JSON 写入 `{book}/.editorial/editorial_state.json` 的 `snapshot` 字段，供后续步骤引用。
 
 ### Step 2：创建团队（声明四角色）
 
@@ -93,7 +93,7 @@ python scripts/resume.py "{书名}" --json
 2. 对应 `.md` 文件存在且 frontmatter `name:` 匹配 → 可 spawn。
 3. 文件缺失/损坏 → 该角色降级为「主会话内联扮演」。
 
-**初始化本轮状态**：初次初始化 0 只在无同章同任务历史时写入 `追踪/editorial_state.json`；
+**初始化本轮状态**：初次初始化 0 只在无同章同任务历史时写入 `{book}/.editorial/editorial_state.json`；
 已有同章同任务状态时不得覆盖其 `rewrite_round`，须按 Step 4 映射后继续：
 
 ```json
@@ -143,7 +143,7 @@ python scripts/resume.py "{书名}" --json
 
 **策划主编输出**：Chapter Brief（格式见 `references/craft/editorial-team.md` 的模板）。
 
-**状态更新**：`追踪/editorial_state.json` 的 `planning-editor.status` → `done`。
+**状态更新**：`{book}/.editorial/editorial_state.json` 的 `planning-editor.status` → `done`。
 
 ### Step 4：写作（写作特工按 Brief 写正文）
 
@@ -152,7 +152,7 @@ python scripts/resume.py "{书名}" --json
 **写作特工输入**（SendMessage 传递，只给 Brief 与调用信封，不给其他上下文）：
 
 `repair_round` 是不属于 Chapter Brief、也不新增持久 schema 的瞬时调用信封。每次 Step 4 SendMessage
-都从现有持久 `追踪/editorial_state.json.rewrite_round` 读取并映射为 `repair_round`：首次无值为 0；
+都从现有持久 `{book}/.editorial/editorial_state.json.rewrite_round` 读取并映射为 `repair_round`：首次无值为 0；
 恢复会话读取同一持久值；恢复会话沿用已有值，不得默认重置。每次提交后因 P0 重写递增，最多 2，并传入下一次调用。
 
 ```
@@ -195,7 +195,7 @@ P0 触发 → 不进入 Step 5。先原子更新并持久化
 下一次 `repair_round` 并发送下一次 Step 4 SendMessage；不得只递增瞬时变量。`repair_round` 达到 2 后仍有
 P0 则停止重写，按 `gate_blocked` 处理。
 
-**状态更新**：`追踪/editorial_state.json` 的 `novelist.status` → `done`，记录 `word_count` 和
+**状态更新**：`{book}/.editorial/editorial_state.json` 的 `novelist.status` → `done`，记录 `word_count` 和
 `output_clean`。
 
 ### Step 5：并行审核（反AI编辑 + 连载核实官）
@@ -357,14 +357,14 @@ S4：伏笔操作与台账一致（该埋的埋了、该收的收了）
 - 返工轮次 = 2（第 3 次仍有 P0）→ 强制人工，不再重写。
 - 连续 3 章「有条件通过」→ 强制人工，说明系统性问题。
 
-**状态更新**：`追踪/editorial_state.json` 的 `result` 字段写入裁决结果（`pass` /
+**状态更新**：`{book}/.editorial/editorial_state.json` 的 `result` 字段写入裁决结果（`pass` /
 `conditional_pass` / `rewrite` / `human_needed`）。
 
 ### Step 7：记录（审核结果落盘）
 
 **目的**：把本轮审核结果记入持久化文件，供跨章分析和断点恢复。
 
-**落盘文件**：`追踪/门禁/editorial_review_ch{XXX}.json`
+**落盘文件**：`{book}/.editorial/editorial_review_ch{XXX}.json`
 
 ```json
 {
@@ -414,7 +414,7 @@ S4：伏笔操作与台账一致（该埋的埋了、该收的收了）
 - **Fallback 追踪**：哪些角色经常降级 solo，是否需要修复 agents 部署。
 - **成本核算**：统计团队模式的实际 token 消耗，优化使用频率。
 
-**更新 `追踪/editorial_state.json`**：把本轮最终结果同步到状态文件，供断点恢复使用。
+**更新 `{book}/.editorial/editorial_state.json`**：把本轮最终结果同步到状态文件，供断点恢复使用。
 
 ### Step 8：关闭（清理临时上下文）
 
@@ -422,10 +422,10 @@ S4：伏笔操作与台账一致（该埋的埋了、该收的收了）
 
 **关闭动作**（TeamDelete）：
 1. 本轮记录的 `result` 字段写入最终结果（`pass` / `conditional_pass` / `human_needed`）。
-2. `team_end` 时间戳写入 `追踪/editorial_state.json`。
+2. `team_end` 时间戳写入 `{book}/.editorial/editorial_state.json`。
 3. 如果使用了 spawn 的子 Agent，确保子 Agent 会话已结束（不残留后台进程）。
 4. 释放本章占用的上下文（团队模式上下文膨胀快，一章结束后及时清理）。
-5. `追踪/editorial_state.json` 的 `status` 标记为 `closed`。
+5. `{book}/.editorial/editorial_state.json` 的 `status` 标记为 `closed`。
 
 **TeamDelete 不是删除日志文件**——`editorial_review_ch{XXX}.json` 是永久记录，每章每轮
 都保留。TeamDelete 是结束本轮编排状态，让总编辑回到单 Agent 模式。
@@ -455,13 +455,13 @@ S4：伏笔操作与台账一致（该埋的埋了、该收的收了）
 TeamCreate（Step 2） → Agent spawn × 4 → SendMessage 传递 → 汇总判定 → TeamDelete（Step 8）
 ```
 
-- **TeamCreate**：Step 2 声明四角色，初始化 `追踪/editorial_state.json`。
+- **TeamCreate**：Step 2 声明四角色，初始化 `{book}/.editorial/editorial_state.json`。
 - **Agent spawn**：按需 spawn，不是一次性全 spawn。策划主编先 spawn，产出 Brief 后才
   spawn 写作特工；写作特工产出正文后才并行 spawn 两个审核角色。
-- **TeamDelete**：Step 8 关闭。关闭后 `追踪/editorial_state.json` 标记 `closed`，子 Agent 会话
+- **TeamDelete**：Step 8 关闭。关闭后 `{book}/.editorial/editorial_state.json` 标记 `closed`，子 Agent 会话
   结束，临时上下文清理。
 
-**异常处理**：如果 Step 1–7 中途因崩溃/超时中断，`追踪/editorial_state.json` 的 `status` 会
+**异常处理**：如果 Step 1–7 中途因崩溃/超时中断，`{book}/.editorial/editorial_state.json` 的 `status` 会
 停留在非 `closed` 状态。下次进入时检测到未关闭的团队 → 询问用户「上一轮团队流程未正常
 结束，是否恢复？」→ 恢复则从断点 Step 继续；不恢复则先 TeamDelete 后重新开始，但同章同任务的
 `rewrite_round` 必须保留，不得清零。
@@ -508,7 +508,7 @@ MAX_CONDITIONAL_CHAPTERS = 3
 
 ### 规则4：状态持久化防丢失
 
-所有返工轮次、条件通过计数、角色状态都写入 `追踪/editorial_state.json`。会话中断后
+所有返工轮次、条件通过计数、角色状态都写入 `{book}/.editorial/editorial_state.json`。会话中断后
 靠状态文件恢复，不靠对话记忆。
 
 ## 降级协议
@@ -560,7 +560,7 @@ MAX_CONDITIONAL_CHAPTERS = 3
 
 ## 状态持久化
 
-### `追踪/editorial_state.json`
+### `{book}/.editorial/editorial_state.json`
 
 当前章的团队流程状态，每步更新。结构：
 
@@ -593,7 +593,7 @@ MAX_CONDITIONAL_CHAPTERS = 3
 - `consecutive_conditional`：连续条件通过章数（跨章累计，达 3 触发人工）。
 - `result`：`pass` / `conditional_pass` / `human_needed` / `closed`。
 
-### `追踪/门禁/editorial_review_ch{XXX}.json`
+### `{book}/.editorial/editorial_review_ch{XXX}.json`
 
 每章的永久审核记录（Step 7 落盘），不因 TeamDelete 而删除。结构见 Step 7 的示例。
 
@@ -613,6 +613,16 @@ MAX_CONDITIONAL_CHAPTERS = 3
 
 团队模式替代 `chapter-loop.md` 的 Step 1–6（读章纲 → 检索 → 速记 → 写正文 →
 机器闸口 → 自查），Step 0/7/8 不变：
+
+团队模式同样是一次章事务，事务的步骤与命令以 `references/craft/editorial-team.md` 为准：
+Step 3 的 Brief 通过预算门、必要的改纲与设定调整完成之后，总编辑运行 prepare；Step 4 的
+候选正文只写进事务的 stage；Step 6 裁决为通过后，在 stage 更新追踪五表，再 validate 与 commit。
+本文档各步骤里说的「写正文」「更新追踪」都指 stage 里的文件，不是正式工程。
+
+团队状态与审核记录放在书籍目录下以点开头的隐藏目录 `{book}/.editorial/` 里。章事务在 commit 时
+比对整本书所有非隐藏文件的哈希，prepare 之后往 `追踪/` 新增或改动文件会被判为 `state_conflict`；
+隐藏目录不计入快照，所以这两类文件不能写进 `追踪/`。旧工程里已有的同名文件，在没有进行中的
+事务时移入该目录即可。
 
 | chapter-loop Step | 团队模式对应 |
 |---|---|
@@ -645,7 +655,7 @@ Fallback 链。本文档是 spawn 协议——定义怎么把这四个角色编�
 - **角色不越权**：写作特工不改情节，反AI编辑不改情节只改 AI 腔，连载核实官不改正文
   只出报告。情节变更必须经总编辑裁决，涉及主线的经作者确认（铁律第 6 条）。
 - **上下文隔离**：写作特工只收 Brief，不收其他角色的分析——防止审核意见污染正文。
-- **日志必记**：每步每个角色的状态都要写入 `追踪/editorial_state.json` 和
+- **日志必记**：每步每个角色的状态都要写入 `{book}/.editorial/editorial_state.json` 和
   `editorial_review_ch{XXX}.json`，不依赖对话记忆。会话中断后靠日志恢复，不靠「我还记得」。
 - **Fallback 透明**：任何角色降级 solo 都要在日志和最终报告中标注，作者有权知道
   这章是不是「完整团队」产出的。
