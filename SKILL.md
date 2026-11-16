@@ -23,7 +23,7 @@ metadata:
 | 无工程的试写、先写一章看看 | `references/workflow/quick-start.md`；第 1–3 章加读 `references/craft/opening.md`。交付标「草稿，未入事务」，已有工程不得借此绕过章事务 |
 | 开书、定位、长篇规划 | `references/workflow/book-init.md`、`references/workflow/outline-system.md` |
 | 补纲/改纲、调整未写剧情 | `references/workflow/outline-system.md` → `references/workflow/task-router.md` 的改纲协议；不混入正文修订 |
-| 写章、续写、日更 | `references/workflow/chapter-loop.md`、`references/craft/scene-rendering.md`；第 1–3 章加读 `references/craft/opening.md`。serial 章尾按场景渲染的「连载章尾」，招式见 `references/craft/hooks.md` |
+| 写章、续写、日更 | `references/workflow/chapter-loop.md`、`references/craft/scene-rendering.md`；第 1–3 章加读 `references/craft/opening.md`（硬目标，以及「首句钩子与可测的能力」）。serial 章尾按场景渲染的「连载章尾」，招式见 `references/craft/hooks.md`；授权停在发现上时执行同文件「发现即收」。排除、不在场与能力限制读 `references/craft/character-consistency.md` 的「排除要闭合」 |
 | 修订、去 AI 味、解决电报体 | `references/workflow/revision.md`、`references/craft/anti-ai-style.md` |
 | 导入旧稿 | `references/workflow/import-book.md`；需要深度反推时再读 `references/workflow/import-deep.md` |
 | 中断恢复、状态诊断 | 运行 `python scripts/resume.py "{book}"`，再读 `references/workflow/task-router.md` |
