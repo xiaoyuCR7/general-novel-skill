@@ -66,7 +66,9 @@
 2. 章意图（Brief）的字段只以 `assets/templates/chapter-intent.json` 为准。交给独立 Agent 写作时，
    把章意图全文、required 来源内容和场景渲染规则直接放进它的输入，不能只给文件路径。
 3. 按 `references/craft/scene-rendering.md` 将 beats 编排为场景单元，再渲染正文。
-   第 1–3 章同时执行 `references/craft/opening.md` 的开篇硬目标。
+   第 1–3 章同时执行 `references/craft/opening.md` 的开篇硬目标，以及「首句钩子与可测的能力」。
+   授权停在发现或线索上时，执行同文件「发现即收」，发现之后不补整理段。
+   本章要排除人物、不在场或能力使用时，执行 `references/craft/character-consistency.md` 的「排除要闭合」。
 4. blocking/P0 问题最多自动修两轮；两轮后仍未清零就报 `gate_blocked`，不再自动改稿，也不提交。
    换编辑团队、换 Beat 流水线或换模型都不重置这两轮额度。
 5. 只有 blockers 为零时，才通过 journal 提交正文、追踪五表、门禁记录与实体索引。提交失败会自动

@@ -36,6 +36,7 @@
    按其中的首屏压力、千字异象、三章对峙落笔。作者指定了平台时，再读
    `references/platforms/platform-guide.md` 里该平台的章长与开篇偏好，平台名不代替文风。
    连载草稿的章尾按 `references/craft/scene-rendering.md` 的「连载章尾」，招式查 `references/craft/hooks.md` 的章尾 13 式。
+   这一章要求停在某条发现或线索上时，按同文件「发现即收」停笔。正文要排除某人、某段不在场或某次能力使用时，读 `references/craft/character-consistency.md` 的「排除要闭合」。
    题材明确时可加读 `references/genres/INDEX.md` 匹配出的一张题材卡。
 3. **一次机器自检**（脚本可用时；章节文件放在作者指定的任意目录）：
 

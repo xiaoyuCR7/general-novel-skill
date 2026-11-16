@@ -544,10 +544,20 @@ class TestSkillContract(unittest.TestCase):
         self.assertIn("references/craft/opening.md", quick)
         self.assertNotIn("只读 `references/craft/scene-rendering.md`", quick)
         ending = scene.split("### 连载章尾", 1)[1].split("### 独立 Agent", 1)[0]
-        for marker in ("威胁", "抉择", "物证", "references/craft/hooks.md", "才刚刚开始", "closed/finale"):
+        for marker in ("威胁", "抉择", "物证", "references/craft/hooks.md", "才刚刚开始", "closed/finale",
+                       "发现即收", "续写起手", "正例", "反例"):
             self.assertIn(marker, ending)
-        self.assertIn("正例", ending)
-        self.assertIn("反例", ending)
+        for marker in ("首句钩子与可测的能力", "第一句就是钩子", "能力第一次出场就要能测", "正例", "反例"):
+            self.assertIn(marker, opening)
+        consistency = (root / "references/craft/character-consistency.md").read_text(encoding="utf-8")
+        self.assertIn("## 排除要闭合", consistency)
+        self.assertIn("四个音节", consistency)
+        for marker in ("发现即收", "排除要闭合", "references/craft/character-consistency.md",
+                       "首句钩子与可测的能力"):
+            self.assertIn(marker, skill)
+        router = (root / "references/workflow/task-router.md").read_text(encoding="utf-8")
+        self.assertIn("发现即收", router)
+        self.assertIn("排除要闭合", router)
 
     def test_publishing_requests_route_to_a_safe_cover_workflow(self):
         repository_root = Path(__file__).resolve().parents[2]

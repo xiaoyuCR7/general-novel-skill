@@ -198,9 +198,11 @@ checkpoint 覆盖正文、五表、gate/index 的原字节与 absent 状态。
   招式用 `references/craft/hooks.md` 的章尾 13 式；节奏档位见 `references/craft/pacing-and-hooks.md`，
   不得覆盖本章闭合要求，也不为钩子新造事件。
   章间衔接工艺——因果链/过渡/动机/呼应——见 `references/craft/chapter-junction.md`。
-- 第 1–3 章写前必须读 `references/craft/opening.md`（首屏压力、千字异象、三章对峙及正反例）。
+- 第 1–3 章写前必须读 `references/craft/opening.md`（首屏压力、千字异象、三章对峙、首句钩子、可测的能力，及正反例）。
   第 4 章起不再默认加载开篇工艺。作者指定了平台时，同时读 `references/platforms/platform-guide.md`
   中该平台的章长与开篇偏好。
+- 章纲要求停在某条发现或线索上时，按 `scene-rendering.md` 的「发现即收」收束，发现之后不补整理、回看或计划。
+  本章要排除人物、不在场证明或能力使用时，按 `references/craft/character-consistency.md` 的「排除要闭合」写那一处核对。
 - 受题材卡约束：爽点类型、场景颗粒、声线要求按已加载的题材卡执行；
   受文风锚约束：腔调对齐样板段落；
   受敏感词替换表约束：正文只写登记过的代称；需新增表项时按 Step 3B 先 recover，
