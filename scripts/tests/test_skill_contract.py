@@ -527,6 +527,28 @@ class TestSkillContract(unittest.TestCase):
             self.assertIn(required, text)
         self.assertIn("P0 是「发出去就翻车」的级别，必须立即改、改完才发", text)
 
+    def test_opening_and_serial_endings_are_routed(self):
+        root = Path(__file__).resolve().parents[2]
+        skill = (root / "SKILL.md").read_text(encoding="utf-8")
+        invariants = (root / "references/workflow/session-invariants.md").read_text(encoding="utf-8")
+        opening = (root / "references/craft/opening.md").read_text(encoding="utf-8")
+        quick = (root / "references/workflow/quick-start.md").read_text(encoding="utf-8")
+        scene = (root / "references/craft/scene-rendering.md").read_text(encoding="utf-8")
+        self.assertIn("references/workflow/session-invariants.md", skill)
+        self.assertIn("references/craft/opening.md", skill)
+        self.assertIn("references/craft/hooks.md", skill)
+        for marker in ("outline_underfilled", "ending_mode", "gate_blocked", "transaction_incomplete"):
+            self.assertIn(marker, invariants)
+        for marker in ("约 300", "约 1000", "当面冲突", "正例", "反例", "番茄", "起点", "晋江"):
+            self.assertIn(marker, opening)
+        self.assertIn("references/craft/opening.md", quick)
+        self.assertNotIn("只读 `references/craft/scene-rendering.md`", quick)
+        ending = scene.split("### 连载章尾", 1)[1].split("### 独立 Agent", 1)[0]
+        for marker in ("威胁", "抉择", "物证", "references/craft/hooks.md", "才刚刚开始", "closed/finale"):
+            self.assertIn(marker, ending)
+        self.assertIn("正例", ending)
+        self.assertIn("反例", ending)
+
     def test_publishing_requests_route_to_a_safe_cover_workflow(self):
         repository_root = Path(__file__).resolve().parents[2]
         skill_text = (repository_root / "SKILL.md").read_text(encoding="utf-8")

@@ -19,10 +19,10 @@
 
 | Intent | 最小上下文包 | 路由 | 默认停止点 |
 |---|---|---|---|
-| 无工程试写 | 作者对五个问题的回答；无书籍工程 | `quick-start.md` + `scene-rendering.md` | 迷你章纲确认后交付「草稿，未入事务」；已有工程不走此路 |
+| 无工程试写 | 作者对五个问题的回答；无书籍工程 | `quick-start.md` + `scene-rendering.md`；第 1–3 章加 `opening.md` | 迷你章纲确认后交付「草稿，未入事务」；已有工程不走此路 |
 | 开书/规划 | 已知定位、事实与授权边界；缺项按动作判定 | `book-init.md`；允许排纲时再读 `outline-system.md` | 交付获授权提案与待定项；只聊设定不排纲，未授权不锁纲/写正文 |
 | 补纲/改纲 | 当前总纲/卷纲/章纲、已写区间、作者授权范围 | `outline-system.md` → 下述改纲协议 | 影响与未写纲确认后停止，不默认修正文或开写 |
-| 写章/续写 | 章纲、前章、出场人物最新状态、未结伏笔与时间线 | `chapter-loop.md` + `scene-rendering.md` | 章事务提交并报告 |
+| 写章/续写 | 章纲、前章、出场人物最新状态、未结伏笔与时间线 | `chapter-loop.md` + `scene-rendering.md`；第 1–3 章加 `opening.md`；serial 章尾加 `hooks.md` | 章事务提交并报告 |
 | 修订/去 AI 味 | 待修正文、作者意图、适用文风权威、明确问题 | `revision.md` + `anti-ai-style.md` | 只修授权范围，不新编剧情 |
 | 中断恢复 | 最后正文、追踪五文件、门禁状态 | `resume.py`；失败则人工核对 | 给出可恢复 checkpoint |
 | 导入旧稿 | 原稿、作者指定的 canonical 范围 | `import-book.md`；复杂项目加 `import-deep.md` | 反推结果经作者确认 |
@@ -34,6 +34,11 @@
 | Dashboard 工作台/编辑 | 活动书籍目录、待编辑文件、当前 revision | `dashboard-workbench.md` | 只打开/修改用户指定范围，冲突时保留草稿并停靠 |
 
 表中的文件位于 `references/workflow/`、`references/craft/` 或 `references/platforms/`；脚本在 `scripts/`。
+
+第 1–3 章（含无工程试写的开篇）在表中路由之外加读 `references/craft/opening.md` 的硬目标。
+`ending_mode=serial` 的章尾执行 `references/craft/scene-rendering.md` 的「连载章尾」，并读
+`references/craft/hooks.md` 的章尾 13 式。closed/finale 不加钩子，也不要为了平台感临时造一个。
+共同不变量在 `references/workflow/session-invariants.md`，与本表冲突时以该文件和作者本轮决定为准。
 
 ### 开书的局部前提
 
