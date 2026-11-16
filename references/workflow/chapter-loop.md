@@ -193,15 +193,20 @@ checkpoint 覆盖正文、五表、gate/index 的原字节与 absent 状态。
   也不得新增未授权的反派、反转、支线、设定或伏笔。
 - 正文只写入 `{stage}/正文/{chapter_file}`，作为 pending draft；字数预算以通过预算门的章意图为准。
   每写完一个情节点就对一次预算，短了当场在该情节点内补足回合；不要等机器门禁报字数不足后再往各处填句子。
-- 结构按 ending_mode：承接 → 发展 → 结算 → 已授权悬念（serial）/闭合余韵（closed/finale）；
-  常规连载钩子工艺见 `references/craft/pacing-and-hooks.md`，不得覆盖本章闭合要求；
-  章间衔接工艺——因果链/过渡/动机/呼应——见 `references/craft/chapter-junction.md`）。
+- 结构按 ending_mode：承接 → 发展 → 结算 → 已授权悬念（serial）/闭合余韵（closed/finale）。
+  serial 的章尾按 `references/craft/scene-rendering.md` 的「连载章尾」落到威胁、抉择或物证，
+  招式用 `references/craft/hooks.md` 的章尾 13 式；节奏档位见 `references/craft/pacing-and-hooks.md`，
+  不得覆盖本章闭合要求，也不为钩子新造事件。
+  章间衔接工艺——因果链/过渡/动机/呼应——见 `references/craft/chapter-junction.md`。
+- 第 1–3 章写前必须读 `references/craft/opening.md`（首屏压力、千字异象、三章对峙及正反例）。
+  第 4 章起不再默认加载开篇工艺。作者指定了平台时，同时读 `references/platforms/platform-guide.md`
+  中该平台的章长与开篇偏好。
 - 受题材卡约束：爽点类型、场景颗粒、声线要求按已加载的题材卡执行；
   受文风锚约束：腔调对齐样板段落；
   受敏感词替换表约束：正文只写登记过的代称；需新增表项时按 Step 3B 先 recover，
   在 prepare 前更新设定再重开事务，不在 stage 改替换表。
 - 微观工艺按需查 `references/craft/` 下的单篇：对话 `dialogue.md`、情绪 `emotion.md`、
-  反转 `reversal.md`、开篇 `opening.md`、智斗 `wit-battle.md`。
+  反转 `reversal.md`、智斗 `wit-battle.md`。开篇见上一条，不把 `opening.md` 再当成可选项。
 - 章意图含兑现、关系转折或高潮时，执行 `scene-rendering.md` 的情绪兑现与回合详略复核；
   需要深入设计才补读 `emotion.md`，不得用重复办理动作代替当事人的变化。
 - 写到「手感不对」（人设别扭、逻辑牵强）时停下来对照人物卡，不要硬写过去。

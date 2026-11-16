@@ -27,9 +27,15 @@
 ## 流程
 
 1. **迷你章纲**：根据回答列 3–5 个 beats，每个含触发、阻力、行动或反应、变化中的至少三项，
-   并写明结尾方式（留已授权问题，或本章闭合）。交作者确认或修改；未确认不写正文。
+   并写明结尾方式（留已授权问题，或本章闭合）。连载试写的最后一个 beat 必须是能引出问题的
+   威胁、抉择或物证，并写明读者会问的那一句；本章闭合则不要为了钩子加事件。
+   交作者确认或修改；未确认不写正文。
    beats 撑不起目标字数时照常输出 `outline_underfilled` 与 `missing_beat_budget`，不注水。
-2. **写草稿**：只读 `references/craft/scene-rendering.md`，按其中的“写时预防套路腔”起草。
+2. **写草稿**：读 `references/craft/scene-rendering.md`，按其中的“写时预防套路腔”起草。
+   所写是第 1–3 章，或这次试写就是一本书的开头时，同时读 `references/craft/opening.md`，
+   按其中的首屏压力、千字异象、三章对峙落笔。作者指定了平台时，再读
+   `references/platforms/platform-guide.md` 里该平台的章长与开篇偏好，平台名不代替文风。
+   连载草稿的章尾按 `references/craft/scene-rendering.md` 的「连载章尾」，招式查 `references/craft/hooks.md` 的章尾 13 式。
    题材明确时可加读 `references/genres/INDEX.md` 匹配出的一张题材卡。
 3. **一次机器自检**（脚本可用时；章节文件放在作者指定的任意目录）：
 

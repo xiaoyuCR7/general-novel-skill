@@ -63,10 +63,10 @@
     "review_interval_days": 90,
     "genre_cards_count": 34,
     "scripts_count": 47,
-    "tests_count": 1248,
+    "tests_count": 1249,
     "craft_files_count": 50,
-    "workflow_files_count": 30,
-    "reference_files_count": 118
+    "workflow_files_count": 31,
+    "reference_files_count": 121
   },
   "features": {
     "core_contracts": [

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased (2026-11-16)
+
+- 开篇：第 1–3 章（含无工程试写）必须读 `opening.md`。新增硬目标：约 300 字内主角进入正在发生的压力，约 1000 字内出现挂在动作或物件上的异常，前三章至少一次当面冲突；番茄/飞卢/起点/晋江只决定这三条有多靠前。附正例与反例。
+- 连载章尾：`scene-rendering.md` 要求 serial 章停在能引出问题的威胁、抉择或物证上，招式直接用 `hooks.md` 的章尾 13 式。closed/finale 仍不造钩子。预告句、景物留白和「才刚刚开始」仍然禁止。
+- 入口：`SKILL.md` 改为路由，共同不变量移到 `workflow/session-invariants.md`。README 开头增加五分钟上手；目录树、能力对照和脚本说明分别移到 `references/repository-map.md` 与 `references/scripts-index.md`，正文未删。
+
 ## Unreleased (2026-10-12)
 
 - `SKILL.md` 新增短篇一节：短篇不建追踪五表、不走章事务与 `resume.py`，以小节大纲为授权，并写明门禁与停止点。导入旧稿的长短篇判定统一按总字数（< 3 万字为短篇），`import-book.md` 不再按单章均长判断。
