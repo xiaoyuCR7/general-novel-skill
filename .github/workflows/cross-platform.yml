@@ -68,7 +68,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-latest]
+        # macos-14 已于 2026-11-02 退役；固定 macos-15 保留一个稳定版本。
+        os: [macos-15, macos-latest]
         python-version: ['3.9', '3.10', '3.12', '3.14']
     steps:
       - uses: actions/checkout@v6
