@@ -22,9 +22,16 @@ The skill itself, its reference files and its sample book are written in Chinese
 
 ## Getting started
 
-Copy this repository into your client's skills directory (for Claude Code, `~/.claude/skills/`), then ask,
-in Chinese, for a trial chapter. The skill asks for whatever is missing, proposes a short outline, and
-writes a draft with one mechanical self-check. Say 「开书」 when you want the full, transactional workflow.
+Install with one command (needs Node.js 22.20+ and GitHub access):
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill
+```
+
+Alternatively, copy this repository into your client's skills directory (for Claude Code,
+`~/.claude/skills/`), then ask, in Chinese, for a trial chapter. The skill asks for whatever is missing,
+proposes a short outline, and writes a draft with one mechanical self-check. Say 「开书」 when you want
+the full, transactional workflow.
 
 ## See it
 

@@ -5,7 +5,7 @@
 
 ## 五分钟上手
 
-尚未安装时，先看下文「跨平台安装」。装好后直接说人话，不必记命令。
+尚未安装时，最快的安装方式是 `npx skills add xiaoyuCR7/general-novel-skill`（详见下文「跨平台安装」，含离线/精简等替代方式）。装好后直接说人话，不必记命令。
 
 1. **先看手感（没有工程）**  
    「先写一章看看：都市异能，外卖骑手能看见别人头顶的寿命倒计时。」  
@@ -76,7 +76,34 @@
 
 general-novel-skill 支持在多个 AI 客户端平台使用：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。
 
-### 一键安装
+### 方式一：npx 一键安装（推荐）
+
+需要 Node.js 22.20+ 且能访问 GitHub。这条命令会自动检测你已安装的 AI 客户端，并把 skill 装到对应目录：
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill
+```
+
+常用参数：
+
+| 参数 | 作用 |
+|------|------|
+| `-g, --global` | 装到用户目录（所有项目可用），默认装到当前项目 |
+| `-a, --agent <名>` | 只装到指定客户端，如 `claude-code`、`cursor`、`codex` |
+| `-y, --yes` | 跳过交互确认 |
+| `--list` | 先看看仓库里有哪些 skill，不安装 |
+
+例如全局装到 Claude Code、无需交互：
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill -g -a claude-code -y
+```
+
+说明：`npx skills` 会把仓库整个目录装进客户端（含 demo/docs 等非运行文件），功能完整但略显臃肿；介意体积或需要离线安装可用下面的脚本。
+
+### 方式二：安装脚本（离线 / 精简 / TRAE 等客户端）
+
+适用于**无网络**、想要**精简安装**（脚本只复制运行必需的 9 项，剔除 demo/docs/缓存），或使用 **TRAE、Antigravity** 等 npx skills 未明确支持的客户端。脚本会自动检测已安装的 AI 客户端并复制 skill；支持 `--tool` 指定单个平台，或 `--tool all` 安装到所有检测到的平台。
 
 **Linux/macOS (Bash):**
 ```bash
@@ -88,9 +115,9 @@ bash install.sh --tool all
 .\install.ps1 -Tool all
 ```
 
-安装脚本会自动检测已安装的 AI 客户端，并将 skill 复制到对应的 skills 目录。支持 `--tool` 指定单个平台，或 `--tool all` 安装到所有检测到的平台。
+> 前提：已先把仓库下载/克隆到本地，在仓库目录内执行脚本。
 
-### 手动安装
+### 方式三：手动安装
 
 | 平台 | 安装路径 | 命令 |
 |------|---------|------|
@@ -146,7 +173,13 @@ cp assets/agents/*.md {书籍工程根}/.trae/agents/
 
 ## 安装
 
-把本目录拷入你所用工具的 skills 目录，例如：
+推荐用 npx 一条命令安装（详见「跨平台安装」）：
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill
+```
+
+无网络或需要精简安装时，也可把本目录拷入你所用工具的 skills 目录，例如：
 
 ```bash
 # Claude Code（用户级）
@@ -155,6 +188,8 @@ cp -R general-novel-skill ~/.claude/skills/
 # Codex CLI / 通用路径
 cp -R general-novel-skill ~/.agents/skills/
 ```
+
+Windows 用户可用 `install.ps1`，Linux/macOS 可用 `install.sh`（`-Tool/--tool all` 装到所有检测到的客户端）。
 
 然后在对话中直接说「开书」「写第 X 章」「写一篇番茄短篇」等即可触发（skill 描述里带触发关键词）。
 
