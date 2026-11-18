@@ -5,7 +5,7 @@
 
 ## 五分钟上手
 
-尚未安装时，最快的安装方式是 `npx skills add xiaoyuCR7/general-novel-skill`（详见下文「跨平台安装」，含离线/精简等替代方式）。装好后直接说人话，不必记命令。
+还没安装？直接跳到文末「安装」一节，一条命令即可装好。装好后回来，直接说人话，不必记命令。
 
 1. **先看手感（没有工程）**  
    「先写一章看看：都市异能，外卖骑手能看见别人头顶的寿命倒计时。」  
@@ -72,126 +72,11 @@
 - 文学感染力、平台适配与最终封面文字仍需作者或编辑验收；脚本分数不替代审美与发布审核。
 - 自动化校验只证明明确写入契约的行为，不替代真实创作样本的匿名评审与长期连载检验。
 
-## 跨平台安装
-
-general-novel-skill 支持在多个 AI 客户端平台使用：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。
-
-### 方式一：npx 一键安装（推荐）
-
-需要 Node.js 22.20+ 且能访问 GitHub。这条命令会自动检测你已安装的 AI 客户端，并把 skill 装到对应目录：
-
-```bash
-npx skills add xiaoyuCR7/general-novel-skill
-```
-
-常用参数：
-
-| 参数 | 作用 |
-|------|------|
-| `-g, --global` | 装到用户目录（所有项目可用），默认装到当前项目 |
-| `-a, --agent <名>` | 只装到指定客户端，如 `claude-code`、`cursor`、`codex` |
-| `-y, --yes` | 跳过交互确认 |
-| `--list` | 先看看仓库里有哪些 skill，不安装 |
-
-例如全局装到 Claude Code、无需交互：
-
-```bash
-npx skills add xiaoyuCR7/general-novel-skill -g -a claude-code -y
-```
-
-说明：`npx skills` 会把仓库整个目录装进客户端（含 demo/docs 等非运行文件），功能完整但略显臃肿；介意体积或需要离线安装可用下面的脚本。
-
-### 方式二：安装脚本（离线 / 精简 / TRAE 等客户端）
-
-适用于**无网络**、想要**精简安装**（脚本只复制运行必需的 9 项，剔除 demo/docs/缓存），或使用 **TRAE、Antigravity** 等 npx skills 未明确支持的客户端。脚本会自动检测已安装的 AI 客户端并复制 skill；支持 `--tool` 指定单个平台，或 `--tool all` 安装到所有检测到的平台。
-
-**Linux/macOS (Bash):**
-```bash
-bash install.sh --tool all
-```
-
-**Windows (PowerShell):**
-```powershell
-.\install.ps1 -Tool all
-```
-
-> 前提：已先把仓库下载/克隆到本地，在仓库目录内执行脚本。
-
-### 方式三：手动安装
-
-| 平台 | 安装路径 | 命令 |
-|------|---------|------|
-| Claude Code | `~/.claude/skills/` | `cp -R general-novel-skill ~/.claude/skills/` |
-| TRAE | `~/.trae/skills/` 或项目级 `.trae/skills/` | `cp -R general-novel-skill ~/.trae/skills/` |
-| Cursor | `~/.cursor/skills/` | `cp -R general-novel-skill ~/.cursor/skills/` |
-| OpenCode | `~/.opencode/skills/` | `cp -R general-novel-skill ~/.opencode/skills/` |
-| Codex | `~/.codex/skills/` | `cp -R general-novel-skill ~/.codex/skills/` |
-
-### MCP Server 模式（推荐）
-
-任何支持 MCP 的客户端都可以通过 MCP Server 调用全部 24 个工具：
-
-```bash
-cd mcp_server
-pip install mcp
-python server.py
-```
-
-配置示例（Claude Desktop）:
-```json
-{
-  "mcpServers": {
-    "general_novel_skill": {
-      "command": "python",
-      "args": ["/path/to/general-novel-skill/mcp_server/server.py"]
-    }
-  }
-}
-```
-
-详见 `mcp_server/README.md`。
-
-### Agent 部署
-
-编辑团队（策划主编/写作特工/反AI编辑/连载核实官）的 Agent 定义文件在 `assets/agents/`：
-
-```bash
-# Claude Code / OpenCode
-cp assets/agents/*.md {书籍工程根}/.claude/agents/
-
-# TRAE
-cp assets/agents/*.md {书籍工程根}/.trae/agents/
-
-# Codex（需转成 .toml 或内联扮演）
-```
-
 ## 仓库地图
 
 目录树和能力对照已移到 [`references/repository-map.md`](references/repository-map.md)。
 脚本用法见 [`references/scripts-index.md`](references/scripts-index.md)。
 入口路由见 [`SKILL.md`](SKILL.md)，共同不变量见 [`references/workflow/session-invariants.md`](references/workflow/session-invariants.md)。
-
-## 安装
-
-推荐用 npx 一条命令安装（详见「跨平台安装」）：
-
-```bash
-npx skills add xiaoyuCR7/general-novel-skill
-```
-
-无网络或需要精简安装时，也可把本目录拷入你所用工具的 skills 目录，例如：
-
-```bash
-# Claude Code（用户级）
-cp -R general-novel-skill ~/.claude/skills/
-
-# Codex CLI / 通用路径
-cp -R general-novel-skill ~/.agents/skills/
-```
-
-Windows 用户可用 `install.ps1`，Linux/macOS 可用 `install.sh`（`-Tool/--tool all` 装到所有检测到的客户端）。
-
-然后在对话中直接说「开书」「写第 X 章」「写一篇番茄短篇」等即可触发（skill 描述里带触发关键词）。
 
 ## 用法速览
 
@@ -296,6 +181,99 @@ agent 定义文件 + 部署/降级/防死循环协议。
 复制 `references/genres/` 下任一题材卡的栏目骨架（12 个固定栏目 + 九件事正文层规范），
 撰写新卡，把别名登记进 `references/genres/INDEX.md` 即可，核心 skill 不用动。
 九件事规范详见 `references/genres/GENRE-PROSE-SPEC.md`。
+
+## 安装
+
+general-novel-skill 支持多个 AI 客户端：Claude Code、TRAE、Cursor、OpenCode、Codex、Gemini CLI、Antigravity，以及任何支持 MCP 协议的客户端。装好后回到「五分钟上手」，在对话里直接说「开书」「写第 X 章」「写一篇番茄短篇」等即可触发（skill 描述里带触发关键词）。
+
+### 方式一：npx 一键安装（推荐）
+
+需要 Node.js 22.20+ 且能访问 GitHub。这条命令会自动检测你已安装的 AI 客户端，并把 skill 装到对应目录：
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill
+```
+
+常用参数：
+
+| 参数 | 作用 |
+|------|------|
+| `-g, --global` | 装到用户目录（所有项目可用），默认装到当前项目 |
+| `-a, --agent <名>` | 只装到指定客户端，如 `claude-code`、`cursor`、`codex` |
+| `-y, --yes` | 跳过交互确认 |
+| `--list` | 先看看仓库里有哪些 skill，不安装 |
+
+例如全局装到 Claude Code、无需交互：
+
+```bash
+npx skills add xiaoyuCR7/general-novel-skill -g -a claude-code -y
+```
+
+说明：`npx skills` 会把仓库整个目录装进客户端（含 demo/docs 等非运行文件），功能完整但略显臃肿；介意体积或需要离线安装可用下面的脚本。
+
+### 方式二：安装脚本（离线 / 精简 / TRAE 等客户端）
+
+适用于**无网络**、想要**精简安装**（脚本只复制运行必需的 9 项，剔除 demo/docs/缓存），或使用 **TRAE、Antigravity** 等 npx skills 未明确支持的客户端。脚本会自动检测已安装的 AI 客户端并复制 skill；支持 `--tool` 指定单个平台，或 `--tool all` 安装到所有检测到的平台。
+
+**Linux/macOS (Bash):**
+```bash
+bash install.sh --tool all
+```
+
+**Windows (PowerShell):**
+```powershell
+.\install.ps1 -Tool all
+```
+
+> 前提：已先把仓库下载/克隆到本地，在仓库目录内执行脚本。
+
+### 方式三：手动安装
+
+| 平台 | 安装路径 | 命令 |
+|------|---------|------|
+| Claude Code | `~/.claude/skills/` | `cp -R general-novel-skill ~/.claude/skills/` |
+| TRAE | `~/.trae/skills/` 或项目级 `.trae/skills/` | `cp -R general-novel-skill ~/.trae/skills/` |
+| Cursor | `~/.cursor/skills/` | `cp -R general-novel-skill ~/.cursor/skills/` |
+| OpenCode | `~/.opencode/skills/` | `cp -R general-novel-skill ~/.opencode/skills/` |
+| Codex | `~/.codex/skills/` | `cp -R general-novel-skill ~/.codex/skills/` |
+
+### MCP Server 模式（可选增强）
+
+任何支持 MCP 的客户端都可以通过 MCP Server 调用全部 24 个工具：
+
+```bash
+cd mcp_server
+pip install mcp
+python server.py
+```
+
+配置示例（Claude Desktop）:
+```json
+{
+  "mcpServers": {
+    "general_novel_skill": {
+      "command": "python",
+      "args": ["/path/to/general-novel-skill/mcp_server/server.py"]
+    }
+  }
+}
+```
+
+详见 `mcp_server/README.md`。
+
+### Agent 部署（可选增强）
+
+编辑团队（策划主编/写作特工/反AI编辑/连载核实官）的 Agent 定义文件在 `assets/agents/`：
+
+```bash
+# Claude Code / OpenCode
+cp assets/agents/*.md {书籍工程根}/.claude/agents/
+
+# TRAE
+cp assets/agents/*.md {书籍工程根}/.trae/agents/
+
+# Codex（需转成 .toml 或内联扮演）
+```
 
 ## provenance
 
