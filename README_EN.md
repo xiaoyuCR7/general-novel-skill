@@ -1,8 +1,10 @@
 # general-novel-skill
 
-An agent skill for writing long-form Chinese web fiction. Prose and story state are committed together,
-every tracked fact must cite the chapter text it came from, and the de-slop pass is built to leave good
-sentences alone. Works with Claude Code, Codex, Cursor, OpenCode and other clients that load skills.
+An agent skill for writing Chinese web fiction — both **long-form serials and complete short stories**.
+For serials, prose and story state are committed together and every tracked fact must cite the chapter
+it came from. Short stories follow a five-beat structure built around one emotion, one reversal and one
+payoff. The de-slop pass is built to leave good sentences alone. Works with Claude Code, Codex, Cursor,
+OpenCode and other clients that load skills.
 
 The skill itself, its reference files and its sample book are written in Chinese. 中文说明见 [README.md](README.md)。
 
@@ -39,6 +41,24 @@ the full, transactional workflow.
   the full workflow, with outlines, setting files and tracking tables.
 - [`demo/deslop-before-after/`](demo/deslop-before-after/README.md): one scene before and after revision,
   with the checker output and a reason for every change.
+
+## Short fiction
+
+Besides serials, the skill writes **complete short stories** (4,000–30,000 characters) for platforms such
+as Zhihu Salt, Fanqie Short and Qimao Short. A short is not a shrunken novel: it is built around
+**one emotion, one reversal, one payoff**, using the five-beat structure in
+[`workflow/short-story-loop.md`](references/workflow/short-story-loop.md) (hook → build → climax →
+reversal → resolution), with a word budget per beat.
+
+- **Emotion first.** Pick one of 意难平 / 甜 / 虐 / 爽 / 恐 before drafting, and match it to the platform
+  (e.g. "虐" on Fanqie Short is a mismatch).
+- **Flat, memorable characters.** Three tags each (want + obstacle + contrast), not full novel profiles.
+- **Ending line by default.** Every finished short gets a closing line per
+  [`craft/short-story-ending.md`](references/craft/short-story-ending.md); the rule is "end on an action,
+  never a moral" — a summary kills the story.
+- **Platform notes on demand.** Word-count ranges and tone per platform load only when needed.
+
+Say 「写一篇番茄短篇」 or 「写个盐言故事」 to start one.
 
 ## Scope and limits
 

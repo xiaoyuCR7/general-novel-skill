@@ -1,7 +1,7 @@
 # general-novel-skill
 
-写长篇网文的 agent skill（**v8.2.0**）：正文和设定一起提交，追踪表里的每条事实都查得到正文出处，
-去 AI 味不把好句子改坏。适用于 Claude Code、Codex、Cursor、OpenCode 等支持 skill 的客户端。
+写长篇网文与短篇小说的 agent skill（**v8.2.0**）：长篇正文和设定一起提交，追踪表里的每条事实都查得到正文出处；
+短篇走五段式、以情绪和反转收尾。去 AI 味不把好句子改坏。适用于 Claude Code、Codex、Cursor、OpenCode 等支持 skill 的客户端。
 
 English version: [README_EN.md](README_EN.md)（英文简介；skill 本体、参考文档与示例作品均为中文）
 
@@ -43,6 +43,21 @@ English version: [README_EN.md](README_EN.md)（英文简介；skill 本体、�
 
 去 AI 味的前后对照（同一场戏，blocking 9 → 0，附逐处修改理由和复现命令）见
 [`demo/deslop-before-after/`](demo/deslop-before-after/README.md)。
+
+## 短篇创作
+
+除长篇连载外，skill 也写**完整短篇**（4000–30000 字），面向知乎盐言、番茄短篇、七猫短篇等平台。
+短篇不是长篇的缩水版，是另一种叙事形态：核心是「一个情绪、一个反转、一次结算」，
+走 [`workflow/short-story-loop.md`](references/workflow/short-story-loop.md) 的**五段式**
+（开头钩子 → 铺垫升级 → 矛盾爆发 → 反转 → 结算收尾），按目标字数分配每段预算。
+
+- **先定情绪再动笔**：意难平 / 甜 / 虐 / 爽 / 恐，情绪与目标平台要匹配（如「虐」配番茄短篇会投错胎）。
+- **人物求立不求全**：每人三个标签（核心欲望 + 阻力 + 反差），不做长篇式完整小传。
+- **结尾句默认交付**：正文写完必点睛，按 [`craft/short-story-ending.md`](references/craft/short-story-ending.md) 写
+  点睛句（正文内，≤1 句）/ 彩蛋句 / 碎碎念；铁律是「用动作收尾，不升华」，写总结等于毁掉整篇。
+- **平台适配**：字数区间与爽度基调按平台加载（盐言 / 番茄短篇 / 七猫短篇），不污染长篇主链。
+
+对话里说「写一篇番茄短篇」「写个盐言故事」即可触发。
 
 ## 支持范围
 
