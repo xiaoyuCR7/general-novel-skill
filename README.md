@@ -3,6 +3,8 @@
 写长篇网文的 agent skill（**v8.2.0**）：正文和设定一起提交，追踪表里的每条事实都查得到正文出处，
 去 AI 味不把好句子改坏。适用于 Claude Code、Codex、Cursor、OpenCode 等支持 skill 的客户端。
 
+English version: [README_EN.md](README_EN.md)（英文简介；skill 本体、参考文档与示例作品均为中文）
+
 ## 五分钟上手
 
 还没安装？直接跳到文末「安装」一节，一条命令即可装好。装好后回来，直接说人话，不必记命令。
